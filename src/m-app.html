@@ -16,9 +16,7 @@
         maximized.two-way="active.maximized"
       >
         <span slot="title">
-          ${active.title ?
-          active.title + ' - ' + active.name :
-          active.name}
+          ${active.title || active.name}
         </span>
       </w-top-bar>
     </template>

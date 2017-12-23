@@ -5,11 +5,11 @@ import { bindable } from 'aurelia-framework';
 export class WApp {
   @bindable name = 'Web Browser';
   @bindable title;
-  @bindable maximized = true;
-  @bindable x = 60;
+  @bindable maximized = false;
+  @bindable x = 70;
   @bindable y = 60;
-  @bindable width = $('body').width() - 120;
-  @bindable height = $('body').height() - 120;
+  @bindable width = $('body').width() - 720;
+  @bindable height = $('body').height() - 360;
   @bindable dragging;
   @bindable resizing;
 
@@ -30,7 +30,6 @@ export class WApp {
   }
 
   maximizedChanged() {
-    console.log('maxChan');
     let method = this.maximized ? 'disable' : 'enable';
 
     this.$el
@@ -49,16 +48,10 @@ export class WApp {
         handles: 'all',
       })
       .draggable({
-        containment: 'wm-root',
         handle: '.w-top-bar',
       });
 
     this.maximizedChanged();
-
-    if (!this.maximized) {
-      this.height = $('wm-root').height();
-    }
-
     this.onFrame();
 
     window.mTop.activeApp = this;

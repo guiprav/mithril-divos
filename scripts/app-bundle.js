@@ -507,7 +507,6 @@ define('w-app',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function
     }
 
     WApp.prototype.maximizedChanged = function maximizedChanged() {
-      console.log('maxChan');
       var method = this.maximized ? 'disable' : 'enable';
 
       this.$el.resizable(method).draggable(method);
@@ -520,16 +519,10 @@ define('w-app',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function
         containment: 'wm-root',
         handles: 'all'
       }).draggable({
-        containment: 'wm-root',
         handle: '.w-top-bar'
       });
 
       this.maximizedChanged();
-
-      if (!this.maximized) {
-        this.height = (0, _jquery2.default)('wm-root').height();
-      }
-
       this.onFrame();
 
       window.mTop.activeApp = this;
@@ -612,12 +605,12 @@ define('w-app',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function
   }), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, 'maximized', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
-      return true;
+      return false;
     }
   }), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, 'x', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
-      return 60;
+      return 70;
     }
   }), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, 'y', [_aureliaFramework.bindable], {
     enumerable: true,
@@ -627,12 +620,12 @@ define('w-app',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function
   }), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, 'width', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
-      return (0, _jquery2.default)('body').width() - 120;
+      return (0, _jquery2.default)('body').width() - 720;
     }
   }), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, 'height', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
-      return (0, _jquery2.default)('body').height() - 120;
+      return (0, _jquery2.default)('body').height() - 360;
     }
   }), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, 'dragging', [_aureliaFramework.bindable], {
     enumerable: true,
@@ -642,13 +635,21 @@ define('w-app',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function
     initializer: null
   })), _class);
 });
-define('w-top-bar',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+define('w-top-bar',['exports', 'jquery', 'aurelia-framework'], function (exports, _jquery, _aureliaFramework) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.WTopBar = undefined;
+
+  var _jquery2 = _interopRequireDefault(_jquery);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -714,6 +715,14 @@ define('w-top-bar',['exports', 'aurelia-framework'], function (exports, _aurelia
       this.maximized = !this.maximized;
     };
 
+    WTopBar.prototype.attached = function attached() {
+      var _this = this;
+
+      (0, _jquery2.default)(this.el).dblclick(function () {
+        !_this.maximized && _this.toggleMaximized();
+      });
+    };
+
     return WTopBar;
   }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'looks', [_aureliaFramework.bindable], {
     enumerable: true,
@@ -751,22 +760,22 @@ define('resources/index',["exports"], function (exports) {
   exports.configure = configure;
   function configure(config) {}
 });
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./app.css\"></require>\n\n  <require from=\"./m-top\"></require>\n  <require from=\"./wm-root\"></require>\n\n  <video\n    autoplay\n    loop\n    muted\n    src=\"/wallpaper.webm\"\n    class=\"app__wallpaper\"\n  ></video>\n\n  <m-top></m-top>\n  <wm-root></wm-root>\n</template>\n"; });
-define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans\");\n@import url(\"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\");\n* {\n  box-sizing: border-box;\n}\nbody {\n  display: flex;\n  flex-direction: column;\n  width: 100vw;\n  height: 100vh;\n  overflow: hidden;\n  margin: 0;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n}\n.app__wallpaper {\n  transform: translate(-50%, -50%);\n  position: fixed;\n  left: 50%;\n  top: 50%;\n  min-width: 100vw;\n  min-height: 100vh;\n  width: auto;\n  height: auto;\n  pointer-events: none;\n}\n.ui-resizable {\n  position: relative;\n}\n.ui-resizable-handle {\n  position: absolute;\n  font-size: 0.1px;\n  display: block;\n}\n.ui-resizable-disabled .ui-resizable-handle,\n.ui-resizable-autohide .ui-resizable-handle {\n  display: none;\n}\n.ui-resizable-n {\n  cursor: n-resize;\n  height: 7px;\n  width: 100%;\n  top: -5px;\n  left: 0;\n}\n.ui-resizable-s {\n  cursor: s-resize;\n  height: 7px;\n  width: 100%;\n  bottom: -5px;\n  left: 0;\n}\n.ui-resizable-e {\n  cursor: e-resize;\n  width: 7px;\n  right: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-w {\n  cursor: w-resize;\n  width: 7px;\n  left: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-se {\n  cursor: se-resize;\n  width: 12px;\n  height: 12px;\n  right: 1px;\n  bottom: 1px;\n}\n.ui-resizable-sw {\n  cursor: sw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  bottom: -5px;\n}\n.ui-resizable-nw {\n  cursor: nw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  top: -5px;\n}\n.ui-resizable-ne {\n  cursor: ne-resize;\n  width: 9px;\n  height: 9px;\n  right: -5px;\n  top: -5px;\n}\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./app.css\"></require>\n\n  <require from=\"./m-top\"></require>\n  <require from=\"./wm-root\"></require>\n\n  <m-top></m-top>\n  <wm-root></wm-root>\n</template>\n"; });
+define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans\");\n@import url(\"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\");\n* {\n  box-sizing: border-box;\n}\nbody {\n  display: flex;\n  flex-direction: column;\n  width: 100vw;\n  height: 100vh;\n  overflow: hidden;\n  margin: 0;\n  font-family: 'Open Sans', sans-serif;\n  font-size: 13px;\n  background-image: url(\"wallpaper.png\");\n  background-size: cover;\n}\n.ui-resizable {\n  position: relative;\n}\n.ui-resizable-handle {\n  position: absolute;\n  font-size: 0.1px;\n  display: block;\n}\n.ui-resizable-disabled .ui-resizable-handle,\n.ui-resizable-autohide .ui-resizable-handle {\n  display: none;\n}\n.ui-resizable-n {\n  cursor: n-resize;\n  height: 7px;\n  width: 100%;\n  top: -5px;\n  left: 0;\n}\n.ui-resizable-s {\n  cursor: s-resize;\n  height: 7px;\n  width: 100%;\n  bottom: -5px;\n  left: 0;\n}\n.ui-resizable-e {\n  cursor: e-resize;\n  width: 7px;\n  right: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-w {\n  cursor: w-resize;\n  width: 7px;\n  left: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-se {\n  cursor: se-resize;\n  width: 12px;\n  height: 12px;\n  right: 1px;\n  bottom: 1px;\n}\n.ui-resizable-sw {\n  cursor: sw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  bottom: -5px;\n}\n.ui-resizable-nw {\n  cursor: nw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  top: -5px;\n}\n.ui-resizable-ne {\n  cursor: ne-resize;\n  width: 9px;\n  height: 9px;\n  right: -5px;\n  top: -5px;\n}\n"; });
 define('text!browser-frame.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser-frame.css\"></require>\n\n  <div ref=\"el\" class=\"browser-frame\">\n    <iframe class=\"browser-frame__iframe\"></iframe>\n  </div>\n</template>\n"; });
-define('text!browser-frame.css', ['module'], function(module) { module.exports = "browser-frame {\n  position: relative;\n  flex-grow: 1;\n}\n.browser-frame {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  border: 1px solid #757575;\n  border-top: 0;\n  background-color: #fff;\n}\n.browser-frame__iframe {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n"; });
+define('text!browser-frame.css', ['module'], function(module) { module.exports = "browser-frame {\n  position: relative;\n  flex-grow: 1;\n}\n.browser-frame {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  border: 1px solid #757575;\n  border-top: 0;\n  background-color: #fff;\n}\n.browser-frame__iframe {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n.ui-draggable-dragging .browser-frame__iframe,\n.ui-resizable-resizing .browser-frame__iframe {\n  pointer-events: none;\n}\n"; });
 define('text!browser-nav.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser-nav.css\"></require>\n\n  <div class=\"browser-nav\">\n    <input\n      autocomplete=\"off\"\n      autocorrect=\"off\"\n      autocapitalize=\"off\"\n      spellcheck=\"false\"\n      value.bind=\"url\"\n      class=\"browser-nav__url-input\"\n    >\n  </div>\n</template>\n"; });
-define('text!browser-nav.css', ['module'], function(module) { module.exports = ".browser-nav {\n  display: flex;\n  align-items: center;\n  height: 36px;\n  border: 1px solid #949494;\n  border-top-color: #666;\n  border-bottom-color: #89898b;\n  border-top: 0;\n  padding: 4px 8px;\n  background-image: linear-gradient(to bottom, #dedede 0%, #aaaaab 100%);\n}\n.browser-nav__url-input {\n  width: 100%;\n  height: 27px;\n  border: 1px solid #bdbdbd;\n  border-radius: 4px;\n  padding: 0 7px;\n  padding-top: 2px;\n  color: #111;\n}\n.browser-nav__url-input:focus {\n  outline: none;\n}\n"; });
+define('text!browser-nav.css', ['module'], function(module) { module.exports = ".browser-nav {\n  display: none;\n  align-items: center;\n  height: 36px;\n  border: 1px solid #949494;\n  border-top-color: #666;\n  border-bottom-color: #89898b;\n  border-top: 0;\n  padding: 4px 8px;\n  background-image: linear-gradient(to bottom, #dedede 0%, #aaaaab 100%);\n}\n.browser-nav__url-input {\n  width: 100%;\n  height: 27px;\n  border: 1px solid #bdbdbd;\n  border-radius: 4px;\n  padding: 0 7px;\n  padding-top: 2px;\n  color: #111;\n}\n.browser-nav__url-input:focus {\n  outline: none;\n}\n"; });
 define('text!m-app.css', ['module'], function(module) { module.exports = ""; });
-define('text!m-app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./m-app.css\"></require>\n  <require from=\"./w-top-bar\"></require>\n\n  <div class=\"\n    m-app\n    ${active.maximized ? 'm-app--maximized' : ''}\n  \">\n    <template if.bind=\"!active.maximized\">\n      ${active.name || name}\n    </template>\n\n    <template if.bind=\"active.maximized\">\n      <w-top-bar\n        looks=\"inline\"\n        maximized.two-way=\"active.maximized\"\n      >\n        <span slot=\"title\">\n          ${active.title ?\n          active.title + ' - ' + active.name :\n          active.name}\n        </span>\n      </w-top-bar>\n    </template>\n  </div>\n</template>\n"; });
+define('text!m-app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./m-app.css\"></require>\n  <require from=\"./w-top-bar\"></require>\n\n  <div class=\"\n    m-app\n    ${active.maximized ? 'm-app--maximized' : ''}\n  \">\n    <template if.bind=\"!active.maximized\">\n      ${active.name || name}\n    </template>\n\n    <template if.bind=\"active.maximized\">\n      <w-top-bar\n        looks=\"inline\"\n        maximized.two-way=\"active.maximized\"\n      >\n        <span slot=\"title\">\n          ${active.title || active.name}\n        </span>\n      </w-top-bar>\n    </template>\n  </div>\n</template>\n"; });
 define('text!m-clock.css', ['module'], function(module) { module.exports = ""; });
 define('text!m-clock.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./m-clock.css\"></require>\n\n  <div class=\"m-clock\">\n    ${label}\n  </div>\n</template>\n"; });
 define('text!m-top.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./m-top.css\"></require>\n  <require from=\"./m-app\"></require>\n  <require from=\"./m-clock\"></require>\n\n  <div class=\"\n    m-top\n    ${activeApp.maximized ? 'm-top--maximized' : ''}\n  \">\n    <div class=\"m-top__left-box\">\n      <m-app active.bind=\"activeApp\"></m-app>\n    </div>\n\n    <div class=\"m-top__right-box\">\n      <m-clock></m-clock>\n    </div>\n  </div>\n</template>\n"; });
-define('text!m-top.css', ['module'], function(module) { module.exports = "m-top {\n  z-index: 100;\n}\n.m-top {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: 24px;\n  padding: 0 10px;\n  background-image: linear-gradient(to bottom, #5a584f 0%, #403f3a 100%);\n  color: #dfdbd2;\n  font-weight: bold;\n  box-shadow: 0 3px 3px 0 rgba(0,0,0,0.75);\n}\n.m-top--maximized {\n  box-shadow: none;\n}\n.m-top__right-box {\n  display: flex;\n}\n.m-top__right-box > * + * {\n  margin-left: 3px;\n}\n"; });
+define('text!m-top.css', ['module'], function(module) { module.exports = "m-top {\n  z-index: 100;\n}\n.m-top {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: 24px;\n  padding: 0 10px;\n  background-image: linear-gradient(to bottom, #5a584f 0%, #403f3a 100%);\n  color: #dfdbd2;\n  font-weight: bold;\n  box-shadow: 0 3px 3px 0 rgba(0,0,0,0.75);\n  user-select: none;\n  cursor: default;\n}\n.m-top--maximized {\n  box-shadow: none;\n}\n.m-top__right-box {\n  display: flex;\n}\n.m-top__right-box > * + * {\n  margin-left: 3px;\n}\n"; });
 define('text!w-app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./w-app.css\"></require>\n  <require from=\"./w-top-bar\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div ref=\"el\" class=\"\n    w-app\n    ${maximized ? 'w-app--maximized' : ''}\n  \">\n    <w-top-bar maximized.two-way=\"maximized\">\n      <span slot=\"title\">\n        ${title || name}\n      </span>\n    </w-top-bar>\n\n    <browser-nav\n      url.bind=\"url\"\n    ></browser-nav>\n\n    <browser-frame\n      url.bind=\"url\"\n    ></browser-frame>\n  </div>\n</template>\n"; });
-define('text!w-app.css', ['module'], function(module) { module.exports = ".w-app {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n}\n.w-app--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.w-app--maximized w-top-bar {\n  display: none;\n}\n"; });
-define('text!w-top-bar.css', ['module'], function(module) { module.exports = ".w-top-bar {\n  position: relative;\n  display: flex;\n  color: #fff;\n}\n.w-top-bar__close-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 17px;\n  height: 17px;\n  border: 1px solid #43423d;\n  border-radius: 50%;\n}\n.w-top-bar__close-btn {\n  background-image: linear-gradient(to bottom, #f28463 0%, #db4e1d 100%);\n  color: #563f35;\n  text-shadow: 0 1px rgba(200,200,200,0.35);\n}\n.w-top-bar__close-btn:before {\n  content: '×';\n}\n.w-top-bar__max-toggle {\n  margin-left: 10px;\n}\n.w-top-bar__title {\n  margin-left: 10px;\n}\n.w-top-bar--default {\n  height: 28px;\n  border-top-left-radius: 5px;\n  border-top-right-radius: 5px;\n  padding: 5px 10px;\n  background-image: linear-gradient(to bottom, #626055 0%, #41403b 100%);\n}\n.w-top-bar--default:before {\n  content: '';\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 1px;\n  height: 26px;\n  border-radius: 5px;\n  box-shadow: inset 0px 2px 0px -1px rgba(150,150,150,0.15);\n  pointer-events: none;\n}\n"; });
-define('text!w-top-bar.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./w-top-bar.css\"></require>\n\n  <div class=\"\n    w-top-bar\n    w-top-bar--${looks}\n  \">\n    <div class=\"w-top-bar__left-box\">\n      <button class=\"w-top-bar__close-btn\">\n      </button>\n\n      <button\n        class=\"w-top-bar__max-toggle\"\n        click.delegate=\"toggleMaximized()\"\n      >\n        [max]\n      </button>\n    </div>\n\n    <div class=\"w-top-bar__title\">\n      <slot name=\"title\"></slot>\n    </div>\n  </div>\n</template>\n"; });
-define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: relative;\n  flex-grow: 1;\n}\n"; });
+define('text!w-app.css', ['module'], function(module) { module.exports = ".w-app {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.w-app.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.w-app--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.w-app--maximized w-top-bar {\n  display: none;\n}\n"; });
+define('text!w-top-bar.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./w-top-bar.css\"></require>\n\n  <div ref=\"el\" class=\"\n    w-top-bar\n    w-top-bar--${looks}\n  \">\n    <div class=\"w-top-bar__left-box\">\n      <button class=\"w-top-bar__close-btn\">\n      </button>\n\n      <button\n        class=\"w-top-bar__max-toggle\"\n        click.delegate=\"toggleMaximized()\"\n      >\n        [max]\n      </button>\n    </div>\n\n    <div class=\"w-top-bar__title\">\n      <slot name=\"title\"></slot>\n    </div>\n  </div>\n</template>\n"; });
+define('text!w-top-bar.css', ['module'], function(module) { module.exports = ".w-top-bar {\n  position: relative;\n  display: flex;\n  color: #fff;\n  user-select: none;\n  cursor: default;\n}\n.w-top-bar__close-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 17px;\n  height: 17px;\n  border: 1px solid #43423d;\n  border-radius: 50%;\n}\n.w-top-bar__close-btn {\n  background-image: linear-gradient(to bottom, #f28463 0%, #db4e1d 100%);\n  color: #563f35;\n  text-shadow: 0 1px rgba(200,200,200,0.35);\n}\n.w-top-bar__close-btn:before {\n  content: '×';\n}\n.w-top-bar__max-toggle {\n  margin-left: 10px;\n}\n.w-top-bar__title {\n  margin-left: 10px;\n}\n.w-top-bar--default {\n  height: 28px;\n  border-top-left-radius: 5px;\n  border-top-right-radius: 5px;\n  padding: 5px 10px;\n  background-image: linear-gradient(to bottom, #626055 0%, #41403b 100%);\n}\n.w-top-bar--default:before {\n  content: '';\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 1px;\n  height: 26px;\n  border-radius: 5px;\n  box-shadow: inset 0px 2px 0px -1px rgba(150,150,150,0.15);\n  pointer-events: none;\n}\n"; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./w-app\"></require>\n\n  <w-app name=\"Web Browser\"></w-app>\n</template>\n"; });
+define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: relative;\n  flex-grow: 1;\n}\n"; });
 //# sourceMappingURL=app-bundle.js.map
