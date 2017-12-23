@@ -4,8 +4,11 @@
   <require from="./browser-nav"></require>
   <require from="./browser-frame"></require>
 
-  <div ref="el" class="w-app">
-    <w-top-bar>
+  <div ref="el" class="
+    w-app
+    ${maximized ? 'w-app--maximized' : ''}
+  ">
+    <w-top-bar maximized.two-way="maximized">
       <span slot="title">
         ${title || name}
       </span>
