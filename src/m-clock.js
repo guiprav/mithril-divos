@@ -10,15 +10,24 @@ function leftPad(ch, len, str) {
 }
 
 export class MClock {
+  constructor() {
+    for (let k of ['update']) {
+      this[k] = this[k].bind(this);
+    }
+  }
+
   attached() {
-    this.interval = setInterval(() => {
-      let now = new Date();
+    this.update();
+    this.interval = setInterval(this.update, 100);
+  }
 
-      let hh = leftPad(0, 2, now.getHours());
-      let mm = leftPad(0, 2, now.getMinutes());
-      let ss = leftPad(0, 2, now.getSeconds());
+  update() {
+    let now = new Date();
 
-      this.label = `${hh}:${mm}:${ss}`;
-    }, 100);
+    let hh = leftPad(0, 2, now.getHours());
+    let mm = leftPad(0, 2, now.getMinutes());
+    let ss = leftPad(0, 2, now.getSeconds());
+
+    this.label = `${hh}:${mm}:${ss}`;
   }
 }
