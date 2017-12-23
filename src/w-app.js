@@ -3,15 +3,17 @@ import 'jquery-ui';
 import { bindable } from 'aurelia-framework';
 
 export class WApp {
-  @bindable name;
+  @bindable name = 'Web Browser';
   @bindable title;
   @bindable maximized = true;
-  @bindable x;
-  @bindable y;
-  @bindable width;
-  @bindable height;
+  @bindable x = 60;
+  @bindable y = 60;
+  @bindable width = $('body').width() - 120;
+  @bindable height = $('body').height() - 120;
+  @bindable dragging;
+  @bindable resizing;
 
-  url = 'https://gnu.org';
+  url = 'https://suckless.org';
 
   constructor() {
     for (let k of ['onFrame']) {
@@ -20,7 +22,11 @@ export class WApp {
   }
 
   get $el() {
-    return $(this.el);
+    if (!this._$el) {
+      this._$el = $(this.el);
+    }
+
+    return this._$el;
   }
 
   maximizedChanged() {
@@ -33,6 +39,10 @@ export class WApp {
   }
 
   attached() {
+    this.title = this.title || this.url.replace(
+      /^https?:\/\/|\/.+$/g, ''
+    );
+
     this.$el
       .resizable({
         containment: 'wm-root',
@@ -50,6 +60,8 @@ export class WApp {
     }
 
     this.onFrame();
+
+    window.mTop.activeApp = this;
   }
 
   dettached() {
@@ -63,8 +75,14 @@ export class WApp {
 
     requestAnimationFrame(this.onFrame);
 
+    let draggingSel = '.ui-draggable-dragging';
+    let resizingSel = '.ui-resizable-resizing';
+
+    this.dragging = this.$el.is(draggingSel);
+    this.resizing = this.$el.is(resizingSel);
+
     if (!this.maximized) {
-      if (this.$el.is('.ui-draggable-dragging')) {
+      if (this.dragging || this.resizing) {
         let style = getComputedStyle(this.el);
 
         let values = {

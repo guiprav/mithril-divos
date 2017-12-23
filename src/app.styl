@@ -13,8 +13,17 @@ body
   margin: 0
   font-family: 'Open Sans', sans-serif
   font-size: 13px
-  background-image: url('/wallpaper.png')
-  background-size: cover
+
+.app__wallpaper
+  transform: translate(-50%, -50%)
+  position: fixed
+  left: 50%
+  top: 50%
+  min-width: 100vw
+  min-height: 100vh
+  width: auto
+  height: auto
+  pointer-events: none
 
 .ui-resizable
   position: relative

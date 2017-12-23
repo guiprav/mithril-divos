@@ -1,23 +1,7 @@
 .w-top-bar
   position: relative
   display: flex
-  height: 28px
-  border-top-left-radius: 5px
-  border-top-right-radius: 5px
-  padding: 5px 10px
-  background-image: linear-gradient(to bottom, #626055 0%, #41403b 100%)
   color: white
-
-  &:before
-    content: ''
-    position: absolute
-    left: 0
-    right: 0
-    top: 1px
-    height: 26px
-    border-radius: 5px
-    box-shadow: inset 0px 2px 0px -1px rgba(150, 150, 150, 0.15)
-    pointer-events: none
 
 .w-top-bar__close-btn
   display: inline-flex
@@ -41,3 +25,21 @@
 
 .w-top-bar__title
   margin-left: 10px
+
+.w-top-bar--default
+  height: 28px
+  border-top-left-radius: 5px
+  border-top-right-radius: 5px
+  padding: 5px 10px
+  background-image: linear-gradient(to bottom, #626055 0%, #41403b 100%)
+
+  &:before
+    content: ''
+    position: absolute
+    left: 0
+    right: 0
+    top: 1px
+    height: 26px
+    border-radius: 5px
+    box-shadow: inset 0px 2px 0px -1px rgba(150, 150, 150, 0.15)
+    pointer-events: none

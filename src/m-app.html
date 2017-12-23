@@ -1,7 +1,26 @@
 <template>
   <require from="./m-app.css"></require>
+  <require from="./w-top-bar"></require>
 
-  <div class="m-app">
-    ${name}
+  <div class="
+    m-app
+    ${active.maximized ? 'm-app--maximized' : ''}
+  ">
+    <template if.bind="!active.maximized">
+      ${active.name || name}
+    </template>
+
+    <template if.bind="active.maximized">
+      <w-top-bar
+        looks="inline"
+        maximized.two-way="active.maximized"
+      >
+        <span slot="title">
+          ${active.title ?
+          active.title + ' - ' + active.name :
+          active.name}
+        </span>
+      </w-top-bar>
+    </template>
   </div>
 </template>
