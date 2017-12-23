@@ -72,6 +72,12 @@
             "main": "aurelia-testing",
             "env": "dev"
           },
+          "jquery",
+          {
+            "name": "jquery-ui",
+            "path": "../node_modules/jquery-ui-dist",
+            "main": "jquery-ui.js"
+          },
           "text"
         ]
       }

@@ -1,0 +1,22 @@
+<template>
+  <require from="./w-app.css"></require>
+  <require from="./w-top-bar"></require>
+  <require from="./browser-nav"></require>
+  <require from="./browser-frame"></require>
+
+  <div ref="el" class="w-app">
+    <w-top-bar>
+      <span slot="title">
+        ${title || name}
+      </span>
+    </w-top-bar>
+
+    <browser-nav
+      url.bind="url"
+    ></browser-nav>
+
+    <browser-frame
+      url.bind="url"
+    ></browser-frame>
+  </div>
+</template>
