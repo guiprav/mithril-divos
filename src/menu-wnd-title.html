@@ -1,24 +1,23 @@
 <template>
-  <require from="./m-app.css"></require>
-  <require from="./w-top-bar"></require>
+  <require from="./menu-wnd-title.css"></require>
+  <require from="./wnd-title"></require>
 
-  <div class="
-    m-app
-    ${active.maximized ? 'm-app--maximized' : ''}
-  ">
+  <div class="menu-wnd-title ${active.maximized ?
+    'menu-wnd-title--maximized' : ''
+  }">
     <template if.bind="!active.maximized">
       ${active.name || name}
     </template>
 
     <template if.bind="active.maximized">
-      <w-top-bar
+      <wnd-title
         looks="inline"
         maximized.two-way="active.maximized"
       >
         <span slot="title">
           ${active.title || active.name}
         </span>
-      </w-top-bar>
+      </wnd-title>
     </template>
   </div>
 </template>

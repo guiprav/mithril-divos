@@ -1,6 +1,6 @@
 import { bindable } from 'aurelia-framework';
 
-export class MApp {
+export class MenuWndTitle {
   @bindable active;
 
   name = 'Desktop';

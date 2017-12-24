@@ -1,4 +1,4 @@
-export class MTop {
+export class DesktopMenu {
   attached() {
     window.mTop = this;
   }

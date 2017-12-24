@@ -1,0 +1,18 @@
+<template>
+  <require from="./desktop-menu.css"></require>
+  <require from="./menu-wnd-title"></require>
+  <require from="./menu-clock"></require>
+
+  <div class="desktop-menu ${activeApp.maximized ?
+    'desktop-menu--maximized' : ''
+  }">
+    <div class="desktop-menu__left-box">
+      <menu-wnd-title active.bind="activeApp">
+      </menu-wnd-title>
+    </div>
+
+    <div class="desktop-menu__right-box">
+      <menu-clock></menu-clock>
+    </div>
+  </div>
+</template>

@@ -9,7 +9,7 @@ function leftPad(ch, len, str) {
   return str;
 }
 
-export class MClock {
+export class MenuClock {
   constructor() {
     for (let k of ['update']) {
       this[k] = this[k].bind(this);

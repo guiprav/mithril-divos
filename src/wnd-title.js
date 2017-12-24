@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { bindable } from 'aurelia-framework';
 
-export class WTopBar {
+export class WndTitle {
   @bindable looks = 'default';
   @bindable maximized;
 

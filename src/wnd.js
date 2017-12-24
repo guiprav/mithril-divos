@@ -2,7 +2,7 @@ import $ from 'jquery';
 import 'jquery-ui';
 import { bindable } from 'aurelia-framework';
 
-export class WApp {
+export class Wnd {
   @bindable name = 'Web Browser';
   @bindable title;
   @bindable maximized = false;
@@ -48,7 +48,7 @@ export class WApp {
         handles: 'all',
       })
       .draggable({
-        handle: '.w-top-bar',
+        handle: '.wnd-title',
       });
 
     this.maximizedChanged();

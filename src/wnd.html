@@ -1,18 +1,17 @@
 <template>
-  <require from="./w-app.css"></require>
-  <require from="./w-top-bar"></require>
+  <require from="./wnd.css"></require>
+  <require from="./wnd-title"></require>
   <require from="./browser-nav"></require>
   <require from="./browser-frame"></require>
 
-  <div ref="el" class="
-    w-app
-    ${maximized ? 'w-app--maximized' : ''}
-  ">
-    <w-top-bar maximized.two-way="maximized">
+  <div ref="el" class="wnd ${
+    maximized ? 'wnd--maximized' : ''
+  }">
+    <wnd-title maximized.two-way="maximized">
       <span slot="title">
         ${title || name}
       </span>
-    </w-top-bar>
+    </wnd-title>
 
     <browser-nav
       url.bind="url"
