@@ -78,6 +78,11 @@
             "path": "../node_modules/jquery-ui-dist",
             "main": "jquery-ui.js"
           },
+          {
+            "name": "moment",
+            "main": "./moment.js",
+            "path": "../node_modules/moment"
+          },
           "text"
         ]
       }

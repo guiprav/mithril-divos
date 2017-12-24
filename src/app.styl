@@ -10,6 +10,9 @@
   box-sizing: border-box
 
 body
+  --desktop-menu-bg: #1d1f21
+  --white-text: #c5c8c6
+
   display: flex
   flex-direction: column
   width: 100vw
@@ -17,9 +20,38 @@ body
   overflow: hidden
   margin: 0
   font-family: 'Droid Sans Mono Awesome', monospace
-  font-size: 16px
+  font-size: 15px
   background-image: url('wallpaper.png')
   background-size: cover
+
+.left-sep
+  position: relative
+  margin-left: 1.4em
+  padding-left: 0.25em
+  padding-right: 0.45em
+  background-color: var(--bg-color)
+
+  &:before
+    content: ''
+    position: absolute
+    right: calc(100% + 1px)
+    top: 0
+    width: 0
+    height: 0
+    border: solid transparent
+    border-width: 0.74em
+    border-right-color: var(--sep-color)
+
+  &:after
+    content: ''
+    position: absolute
+    right: 100%
+    top: 0
+    width: 0
+    height: 0
+    border: solid transparent
+    border-width: 0.74em
+    border-right-color: var(--bg-color)
 
 .ui-resizable
   position: relative
