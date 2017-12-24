@@ -11,6 +11,7 @@
 
 body
   --desktop-menu-bg: #1d1f21
+  --grey-text: #373b41
   --white-text: #c5c8c6
 
   display: flex
@@ -31,6 +32,17 @@ body
   padding-right: 0.45em
   background-color: var(--bg-color)
 
+  &:after
+    content: ''
+    position: absolute
+    right: 100%
+    top: 0
+    width: 0
+    height: 0
+    border: solid transparent
+    border-width: 0.74em
+    border-right-color: var(--bg-color)
+
   &:before
     content: ''
     position: absolute
@@ -42,16 +54,34 @@ body
     border-width: 0.74em
     border-right-color: var(--sep-color)
 
+.right-sep
+  position: relative
+  margin-right: 1.4em
+  padding-right: 0.25em
+  padding-left: 0.45em
+  background-color: var(--bg-color)
+
   &:after
     content: ''
     position: absolute
-    right: 100%
+    left: 100%
     top: 0
     width: 0
     height: 0
     border: solid transparent
     border-width: 0.74em
-    border-right-color: var(--bg-color)
+    border-left-color: var(--bg-color)
+
+  &:before
+    content: ''
+    position: absolute
+    left: calc(100% + 1px)
+    top: 0
+    width: 0
+    height: 0
+    border: solid transparent
+    border-width: 0.74em
+    border-left-color: var(--sep-color)
 
 .ui-resizable
   position: relative

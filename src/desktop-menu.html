@@ -1,5 +1,6 @@
 <template>
   <require from="./desktop-menu.css"></require>
+  <require from="./desktop-menu-tags"></require>
   <require from="./menu-wnd-title"></require>
   <require from="./menu-clock"></require>
 
@@ -7,6 +8,7 @@
     'desktop-menu--maximized' : ''
   }">
     <div class="desktop-menu__left-box">
+      <desktop-menu-tags></desktop-menu-tags>
       <menu-wnd-title active.bind="activeApp">
       </menu-wnd-title>
     </div>

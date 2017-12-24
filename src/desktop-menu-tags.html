@@ -1,0 +1,14 @@
+<template>
+  <require from="./desktop-menu-tags.css"></require>
+
+  <div class="desktop-menu-tags right-sep">
+    <button repeat.for="tag of tags" class="
+      desktop-menu-tags__tag
+      desktop-menu-tags__tag--${tag.name}
+      ${tag === active ?
+      'desktop-menu-tags__tag--active' : ''}
+    ">
+      ${tag.sym}
+    </button>
+  </div>
+</template>

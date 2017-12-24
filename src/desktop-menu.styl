@@ -6,7 +6,6 @@ desktop-menu
   align-items: center
   justify-content: space-between
   line-height: 22px
-  padding: 0 10px
   background-color: var(--desktop-menu-bg)
   color: var(--white-text)
   user-select: none
@@ -15,8 +14,10 @@ desktop-menu
 .desktop-menu--maximized
   box-shadow: none
 
+.desktop-menu__left-box
 .desktop-menu__right-box
   display: flex
 
+.desktop-menu__right-box
   & > * + *
     margin-left: 3px
