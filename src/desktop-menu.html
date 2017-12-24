@@ -2,6 +2,7 @@
   <require from="./desktop-menu.css"></require>
   <require from="./desktop-menu-tags"></require>
   <require from="./menu-wnd-title"></require>
+  <require from="./menu-vol-ctrl"></require>
   <require from="./menu-clock"></require>
 
   <div class="desktop-menu ${activeApp.maximized ?
@@ -14,6 +15,7 @@
     </div>
 
     <div class="desktop-menu__right-box">
+      <menu-vol-ctrl></menu-vol-ctrl>
       <menu-clock></menu-clock>
     </div>
   </div>
