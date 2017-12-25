@@ -3,6 +3,7 @@ import 'jquery-ui';
 import { bindable } from 'aurelia-framework';
 
 export class Wnd {
+  @bindable tag;
   @bindable name = 'Web Browser';
   @bindable title = 'Web Browser';
   @bindable maximized = false;
@@ -40,6 +41,12 @@ export class Wnd {
     this.$el
       .resizable({ handles: 'all' })
       .draggable();
+
+    let activeTag = desktopMenuTags.active;
+
+    if (this.tag !== activeTag.name) {
+      this.$el.hide();
+    }
 
     this.maximizedChanged();
     this.onFrame();

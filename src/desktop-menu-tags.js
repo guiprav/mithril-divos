@@ -1,6 +1,16 @@
+import $ from 'jquery';
+import { observable } from 'aurelia-framework';
+
 export class DesktopMenuTags {
   tags = [];
-  active = null;
+  @observable active = null;
+
+  activeChanged() {
+    let { active } = this;
+
+    $(`.wnd:not(.wnd--tag_${active.name})`).hide();
+    $(`.wnd--tag_${active.name}`).show();
+  }
 
   constructor() {
     this.tags = [

@@ -273,12 +273,31 @@ define('browser',['exports'], function (exports) {
     this.url = 'https://suckless.org';
   };
 });
-define('desktop-menu-tags',['exports'], function (exports) {
+define('desktop-menu-tags',['exports', 'jquery', 'aurelia-framework'], function (exports, _jquery, _aureliaFramework) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.DesktopMenuTags = undefined;
+
+  var _jquery2 = _interopRequireDefault(_jquery);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _initDefineProp(target, property, descriptor, context) {
+    if (!descriptor) return;
+    Object.defineProperty(target, property, {
+      enumerable: descriptor.enumerable,
+      configurable: descriptor.configurable,
+      writable: descriptor.writable,
+      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+    });
+  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -286,18 +305,71 @@ define('desktop-menu-tags',['exports'], function (exports) {
     }
   }
 
-  var DesktopMenuTags = exports.DesktopMenuTags = function DesktopMenuTags() {
-    _classCallCheck(this, DesktopMenuTags);
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+    var desc = {};
+    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+      desc[key] = descriptor[key];
+    });
+    desc.enumerable = !!desc.enumerable;
+    desc.configurable = !!desc.configurable;
 
-    this.tags = [];
-    this.active = null;
+    if ('value' in desc || desc.initializer) {
+      desc.writable = true;
+    }
 
-    this.tags = [{ name: 'web', sym: '\uE1BA' }, { name: 'term', sym: '\uE21A' }, { name: 'draw', sym: '\uE858' }, { name: 'im', sym: '\uE11F' }, { name: 'game', sym: '\uE216' }];
+    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+      return decorator(target, property, desc) || desc;
+    }, desc);
 
-    this.active = this.tags[0];
+    if (context && desc.initializer !== void 0) {
+      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+      desc.initializer = undefined;
+    }
 
-    window.desktopMenuTags = this;
-  };
+    if (desc.initializer === void 0) {
+      Object['define' + 'Property'](target, property, desc);
+      desc = null;
+    }
+
+    return desc;
+  }
+
+  function _initializerWarningHelper(descriptor, context) {
+    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+  }
+
+  var _desc, _value, _class, _descriptor;
+
+  var DesktopMenuTags = exports.DesktopMenuTags = (_class = function () {
+    DesktopMenuTags.prototype.activeChanged = function activeChanged() {
+      var active = this.active;
+
+
+      (0, _jquery2.default)('.wnd:not(.wnd--tag_' + active.name + ')').hide();
+      (0, _jquery2.default)('.wnd--tag_' + active.name).show();
+    };
+
+    function DesktopMenuTags() {
+      _classCallCheck(this, DesktopMenuTags);
+
+      this.tags = [];
+
+      _initDefineProp(this, 'active', _descriptor, this);
+
+      this.tags = [{ name: 'web', sym: '\uE1BA' }, { name: 'term', sym: '\uE21A' }, { name: 'draw', sym: '\uE858' }, { name: 'im', sym: '\uE11F' }, { name: 'game', sym: '\uE216' }];
+
+      this.active = this.tags[0];
+
+      window.desktopMenuTags = this;
+    }
+
+    return DesktopMenuTags;
+  }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'active', [_aureliaFramework.observable], {
+    enumerable: true,
+    initializer: function initializer() {
+      return null;
+    }
+  })), _class);
 });
 define('desktop-menu',["exports"], function (exports) {
   "use strict";
@@ -737,31 +809,33 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
     throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
   }
 
-  var _desc, _value, _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10;
+  var _desc, _value, _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11;
 
   var Wnd = exports.Wnd = (_class = function () {
     function Wnd() {
       _classCallCheck(this, Wnd);
 
-      _initDefineProp(this, 'name', _descriptor, this);
+      _initDefineProp(this, 'tag', _descriptor, this);
 
-      _initDefineProp(this, 'title', _descriptor2, this);
+      _initDefineProp(this, 'name', _descriptor2, this);
 
-      _initDefineProp(this, 'maximized', _descriptor3, this);
+      _initDefineProp(this, 'title', _descriptor3, this);
 
-      _initDefineProp(this, 'x', _descriptor4, this);
+      _initDefineProp(this, 'maximized', _descriptor4, this);
 
-      _initDefineProp(this, 'y', _descriptor5, this);
+      _initDefineProp(this, 'x', _descriptor5, this);
 
-      _initDefineProp(this, 'width', _descriptor6, this);
+      _initDefineProp(this, 'y', _descriptor6, this);
 
-      _initDefineProp(this, 'height', _descriptor7, this);
+      _initDefineProp(this, 'width', _descriptor7, this);
 
-      _initDefineProp(this, 'dragging', _descriptor8, this);
+      _initDefineProp(this, 'height', _descriptor8, this);
 
-      _initDefineProp(this, 'resizing', _descriptor9, this);
+      _initDefineProp(this, 'dragging', _descriptor9, this);
 
-      _initDefineProp(this, 'vm', _descriptor10, this);
+      _initDefineProp(this, 'resizing', _descriptor10, this);
+
+      _initDefineProp(this, 'vm', _descriptor11, this);
 
       var _arr = ['onFrame'];
 
@@ -779,6 +853,12 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
 
     Wnd.prototype.attached = function attached() {
       this.$el.resizable({ handles: 'all' }).draggable();
+
+      var activeTag = desktopMenuTags.active;
+
+      if (this.tag !== activeTag.name) {
+        this.$el.hide();
+      }
 
       this.maximizedChanged();
       this.onFrame();
@@ -852,48 +932,51 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
     }]);
 
     return Wnd;
-  }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'name', [_aureliaFramework.bindable], {
+  }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'tag', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  }), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'name', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return 'Web Browser';
     }
-  }), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'title', [_aureliaFramework.bindable], {
+  }), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, 'title', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return 'Web Browser';
     }
-  }), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, 'maximized', [_aureliaFramework.bindable], {
+  }), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, 'maximized', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return false;
     }
-  }), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, 'x', [_aureliaFramework.bindable], {
+  }), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, 'x', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return 70;
     }
-  }), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, 'y', [_aureliaFramework.bindable], {
+  }), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, 'y', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return 60;
     }
-  }), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, 'width', [_aureliaFramework.bindable], {
+  }), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, 'width', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return (0, _jquery2.default)('body').width() - 720;
     }
-  }), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, 'height', [_aureliaFramework.bindable], {
+  }), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, 'height', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return (0, _jquery2.default)('body').height() - 360;
     }
-  }), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, 'dragging', [_aureliaFramework.bindable], {
+  }), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, 'dragging', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: null
-  }), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, 'resizing', [_aureliaFramework.bindable], {
+  }), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, 'resizing', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: null
-  }), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, 'vm', [_aureliaFramework.bindable], {
+  }), _descriptor11 = _applyDecoratedDescriptor(_class.prototype, 'vm', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: null
   })), _class);
@@ -921,16 +1004,16 @@ define('text!desktop-menu.html', ['module'], function(module) { module.exports =
 define('text!desktop-menu.css', ['module'], function(module) { module.exports = "desktop-menu {\n  z-index: 100;\n}\n.desktop-menu {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  line-height: 22px;\n  background-color: var(--desktop-menu-bg);\n  color: var(--white-text);\n  user-select: none;\n  cursor: default;\n  box-shadow: 0 1px 10px rgba(0,0,0,0.5);\n}\n.desktop-menu--maximized {\n  box-shadow: none;\n}\n.desktop-menu__left-box,\n.desktop-menu__right-box {\n  display: flex;\n}\n.desktop-menu__right-box > * + * {\n  margin-left: 3px;\n}\n"; });
 define('text!menu-clock.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-clock.css\"></require>\n\n  <div class=\"menu-clock\">\n    <div class=\"menu-clock__date left-sep join-right-sep\">\n      &#xe846; ${date}\n    </div>\n\n    <div class=\"menu-clock__time left-sep\">\n      ${time}\n    </div>\n  </div>\n</template>\n"; });
 define('text!menu-clock.css', ['module'], function(module) { module.exports = ".menu-clock {\n  display: flex;\n}\n.menu-clock__date {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n}\n.menu-clock__time {\n  --sep-color: var(--white-text);\n  --bg-color: var(--desktop-menu-bg);\n}\n"; });
-define('text!menu-im.css', ['module'], function(module) { module.exports = ".menu-im {\n  display: flex;\n  color: var(--yellow-text);\n}\n.menu-im__whom {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n}\n.menu-im__when {\n  --sep-color: var(--yellow-text);\n  --bg-color: var(--desktop-menu-bg);\n}\n"; });
 define('text!menu-im.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-im.css\"></require>\n\n  <div class=\"menu-im\">\n    <div class=\"menu-im__whom left-sep\">\n      &#xe82b; ${whom}\n    </div>\n\n    <div class=\"menu-im__when left-sep join-right-sep\">\n      ${when}\n    </div>\n  </div>\n</template>\n"; });
-define('text!menu-netmon.css', ['module'], function(module) { module.exports = ".menu-netmon {\n  display: flex;\n}\n.menu-netmon__rx {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--green-text);\n}\n.menu-netmon__tx {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--red-text);\n}\n"; });
+define('text!menu-im.css', ['module'], function(module) { module.exports = ".menu-im {\n  display: flex;\n  color: var(--yellow-text);\n}\n.menu-im__whom {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n}\n.menu-im__when {\n  --sep-color: var(--yellow-text);\n  --bg-color: var(--desktop-menu-bg);\n}\n"; });
 define('text!menu-netmon.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-netmon.css\"></require>\n\n  <div class=\"menu-netmon\">\n    <div class=\"menu-netmon__rx left-sep\">\n      &#xe8a1; ${_rx}K\n    </div>\n\n    <div class=\"menu-netmon__tx left-sep join-right-sep\">\n      &#xe8a0; ${_tx}K\n    </div>\n  </div>\n</template>\n"; });
-define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports = ".menu-vol-ctrl {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg-2);\n  color: var(--purple-text);\n}\n"; });
+define('text!menu-netmon.css', ['module'], function(module) { module.exports = ".menu-netmon {\n  display: flex;\n}\n.menu-netmon__rx {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--green-text);\n}\n.menu-netmon__tx {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--red-text);\n}\n"; });
 define('text!menu-vol-ctrl.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-vol-ctrl.css\"></require>\n\n  <div class=\"menu-vol-ctrl left-sep join-right-sep\">\n    &#xe13d; ${_volume}%\n  </div>\n</template>\n"; });
+define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports = ".menu-vol-ctrl {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg-2);\n  color: var(--purple-text);\n}\n"; });
 define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
 define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${active.title || active.name || name}\n  </div>\n</template>\n"; });
-define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    tag.bind=\"wnd.tag\"\n    vm=\"./${wnd.vm}\"\n    view-model.ref=\"wnd.ref\"\n  ></wnd>\n</template>\n"; });
+define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
 define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n.wnd__compose {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background-color: var(--desktop-menu-bg);\n}\n"; });
-define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : 'wnd--floating'\n  }\">\n    <compose\n      view-model.bind=\"vm\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
+define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"wnd wnd--tag_${tag} ${\n    maximized ? 'wnd--maximized' : 'wnd--floating'\n  }\">\n    <compose\n      view-model.bind=\"vm\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map
