@@ -34,6 +34,35 @@ export class App {
       case 'Meta':
         this.metaKey = ev.type === 'keydown';
         break;
+
+      // FIXME: Move to wmRoot.
+      case 'q': {
+        if (ev.type !== 'keydown' || !ev.metaKey) {
+          break;
+        }
+
+        let activeWnd = wmRoot.active;
+        activeWnd && activeWnd.kill();
+
+        break;
+      }
+
+      // FIXME: Move to wmRoot.
+      case 'm': {
+        if (ev.type !== 'keydown' || !ev.metaKey) {
+          break;
+        }
+
+        let activeWnd = wmRoot.active;
+
+        if (!activeWnd) {
+          break;
+        }
+
+        activeWnd.maximized = !activeWnd.maximized;
+
+        break;
+      }
     }
   }
 }

@@ -71,6 +71,35 @@ define('app',['exports'], function (exports) {
         case 'Meta':
           this.metaKey = ev.type === 'keydown';
           break;
+
+        case 'q':
+          {
+            if (ev.type !== 'keydown' || !ev.metaKey) {
+              break;
+            }
+
+            var activeWnd = wmRoot.active;
+            activeWnd && activeWnd.kill();
+
+            break;
+          }
+
+        case 'm':
+          {
+            if (ev.type !== 'keydown' || !ev.metaKey) {
+              break;
+            }
+
+            var _activeWnd = wmRoot.active;
+
+            if (!_activeWnd) {
+              break;
+            }
+
+            _activeWnd.maximized = !_activeWnd.maximized;
+
+            break;
+          }
       }
     };
 
@@ -1054,8 +1083,14 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
       this.onFrame();
     };
 
-    Wnd.prototype.dettached = function dettached() {
-      this.isDettached = true;
+    Wnd.prototype.kill = function kill() {
+      if (wmRoot.active === this) {
+        wmRoot.active = null;
+      }
+
+      wmRoot.wnds.splice(wmRoot.wnds.indexOf(this), 1);
+
+      this.dead = true;
     };
 
     Wnd.prototype.checkFocus = function checkFocus() {
@@ -1063,7 +1098,7 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
     };
 
     Wnd.prototype.onFrame = function onFrame() {
-      if (this.isDettached) {
+      if (this.dead) {
         return;
       }
 

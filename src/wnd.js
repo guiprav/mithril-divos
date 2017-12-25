@@ -61,8 +61,16 @@ export class Wnd {
     this.onFrame();
   }
 
-  dettached() {
-    this.isDettached = true;
+  kill() {
+    if (wmRoot.active === this) {
+      wmRoot.active = null;
+    }
+
+    wmRoot.wnds.splice(
+      wmRoot.wnds.indexOf(this), 1
+    );
+
+    this.dead = true;
   }
 
   checkFocus() {
@@ -73,7 +81,7 @@ export class Wnd {
   }
 
   onFrame() {
-    if (this.isDettached) {
+    if (this.dead) {
       return;
     }
 
