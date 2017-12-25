@@ -1,0 +1,10 @@
+<template>
+  <require from="./browser.css"></require>
+  <require from="./browser-nav"></require>
+  <require from="./browser-frame"></require>
+
+  <div class="browser">
+    <browser-nav url.bind="url"></browser-nav>
+    <browser-frame url.bind="url"></browser-frame>
+  </div>
+</template>

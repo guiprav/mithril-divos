@@ -2,5 +2,8 @@
   <require from="./wm-root.css"></require>
   <require from="./wnd"></require>
 
-  <wnd name="Web Browser"></wnd>
+  <wnd
+    repeat.for="wnd of wnds"
+    view-model="./${wnd}"
+  ></wnd>
 </template>

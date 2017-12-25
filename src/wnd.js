@@ -4,7 +4,7 @@ import { bindable } from 'aurelia-framework';
 
 export class Wnd {
   @bindable name = 'Web Browser';
-  @bindable title;
+  @bindable title = 'Web Browser';
   @bindable maximized = false;
   @bindable x = 70;
   @bindable y = 60;
@@ -12,8 +12,7 @@ export class Wnd {
   @bindable height = $('body').height() - 360;
   @bindable dragging;
   @bindable resizing;
-
-  url = 'https://suckless.org';
+  @bindable viewModel;
 
   constructor() {
     for (let k of ['onFrame']) {
@@ -38,10 +37,6 @@ export class Wnd {
   }
 
   attached() {
-    this.title = this.title || this.url.replace(
-      /^https?:\/\/|\/.+$/g, ''
-    );
-
     this.$el
       .resizable({ handles: 'all' })
       .draggable();

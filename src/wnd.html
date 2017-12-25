@@ -1,17 +1,12 @@
 <template>
   <require from="./wnd.css"></require>
-  <require from="./browser-nav"></require>
-  <require from="./browser-frame"></require>
 
   <div ref="el" class="wnd ${
     maximized ? 'wnd--maximized' : 'wnd--floating'
   }">
-    <browser-nav
-      url.bind="url"
-    ></browser-nav>
-
-    <browser-frame
-      url.bind="url"
-    ></browser-frame>
+    <compose
+      view-model.bind="viewModel"
+      class="wnd__compose"
+    ></compose>
   </div>
 </template>
