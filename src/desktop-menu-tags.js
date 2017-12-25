@@ -32,8 +32,8 @@ export class DesktopMenuTags {
 
     let lastActiveWnd = activeTag.lastActive;
 
-    if (lastActiveWnd) {
-      lastActiveWnd.active = true;
+    if (window.wmRoot) {
+      wmRoot.active = lastActiveWnd;
     }
   }
 

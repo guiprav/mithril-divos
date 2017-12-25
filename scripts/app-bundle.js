@@ -456,8 +456,8 @@ define('desktop-menu-tags',['exports', 'jquery', 'aurelia-framework'], function 
 
       var lastActiveWnd = activeTag.lastActive;
 
-      if (lastActiveWnd) {
-        lastActiveWnd.active = true;
+      if (window.wmRoot) {
+        wmRoot.active = lastActiveWnd;
       }
     };
 
@@ -1285,6 +1285,6 @@ define('text!menu-wnd-title.css', ['module'], function(module) { module.exports 
 define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${wmRoot.active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${wmRoot.active.title || wmRoot.active.name || name}\n  </div>\n</template>\n"; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    tag.bind=\"wnd.tag\"\n    vm.bind=\"wnd.vm\"\n    view-model.ref=\"wnd.ref\"\n  ></wnd>\n</template>\n"; });
 define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
-define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--active {\n  z-index: 100;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n.wnd__compose {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background-color: var(--desktop-menu-bg);\n}\n"; });
 define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"\n    wnd\n    wnd--tag_${tag}\n    wnd--vm_${vm}\n    ${active ? 'wnd--active' : ''}\n    ${maximized ? 'wnd--maximized' : 'wnd--floating'}\n  \">\n    <compose\n      view-model.ref=\"compose\"\n      view-model=\"./${vm}\"\n      model.bind=\"params\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
+define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--active {\n  z-index: 100;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n.wnd__compose {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background-color: var(--desktop-menu-bg);\n}\n"; });
 //# sourceMappingURL=app-bundle.js.map
