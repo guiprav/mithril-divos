@@ -6,7 +6,8 @@ export class Wnd {
   @bindable tag;
   @bindable name = 'Web Browser';
   @bindable title = 'Web Browser';
-  @bindable maximized = false;
+  @bindable maximized = true;
+  @bindable active;
   @bindable x = 70;
   @bindable y = 60;
   @bindable width = $('body').width() - 720;
@@ -37,7 +38,15 @@ export class Wnd {
       .draggable(method);
   }
 
+  activeChanged() {
+    if (this.active) {
+      wmRoot.active = this;
+    }
+  }
+
   attached() {
+    this.$el.data('model', this);
+
     this.$el
       .resizable({ handles: 'all' })
       .draggable();
@@ -50,12 +59,17 @@ export class Wnd {
 
     this.maximizedChanged();
     this.onFrame();
-
-    window.desktopMenu.activeApp = this;
   }
 
   dettached() {
     this.isDettached = true;
+  }
+
+  checkFocus() {
+    return (
+      this.el === document.activeElement ||
+      $.contains(this.el, document.activeElement)
+    );
   }
 
   onFrame() {
@@ -64,6 +78,17 @@ export class Wnd {
     }
 
     requestAnimationFrame(this.onFrame);
+
+    if (this.checkFocus()) {
+      if (!this.active) {
+        this.active = true;
+      }
+    }
+    else {
+      if (this.active) {
+        this.active = false;
+      }
+    }
 
     let draggingSel = '.ui-draggable-dragging';
     let resizingSel = '.ui-resizable-resizing';

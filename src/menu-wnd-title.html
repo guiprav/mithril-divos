@@ -1,9 +1,9 @@
 <template>
   <require from="./menu-wnd-title.css"></require>
 
-  <div class="menu-wnd-title ${active.maximized ?
+  <div class="menu-wnd-title ${wmRoot.active.maximized ?
     'menu-wnd-title--maximized' : ''
   }">
-    ${active.title || active.name || name}
+    ${wmRoot.active.title || wmRoot.active.name || name}
   </div>
 </template>

@@ -8,15 +8,33 @@ export class DesktopMenuTags {
   @observable active = null;
 
   activeChanged() {
-    let { active } = this;
+    let activeTag = this.active;
 
-    if (!active) {
+    if (!activeTag) {
       $('.wnd').hide();
+
+      if (window.wmRoot) {
+        wmRoot.active = null;
+      }
+
       return;
     }
 
-    $(`.wnd:not(.wnd--tag_${active.name})`).hide();
-    $(`.wnd--tag_${active.name}`).show();
+    $(`.wnd:not(.wnd--tag_${activeTag.name})`).hide();
+
+    let $showing = $(`.wnd--tag_${activeTag.name}`);
+
+    if (!$showing.length && window.wmRoot) {
+      wmRoot.active = null;
+    }
+
+    $showing.show();
+
+    let lastActiveWnd = activeTag.lastActive;
+
+    if (lastActiveWnd) {
+      lastActiveWnd.active = true;
+    }
   }
 
   constructor() {

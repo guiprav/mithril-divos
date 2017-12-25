@@ -5,13 +5,12 @@
   <require from="./menu-vol-ctrl"></require>
   <require from="./menu-clock"></require>
 
-  <div class="desktop-menu ${activeApp.maximized ?
+  <div class="desktop-menu ${wmRoot.active.maximized ?
     'desktop-menu--maximized' : ''
   }">
     <div class="desktop-menu__left-box">
       <desktop-menu-tags></desktop-menu-tags>
-      <menu-wnd-title active.bind="activeApp">
-      </menu-wnd-title>
+      <menu-wnd-title></menu-wnd-title>
     </div>
 
     <div class="desktop-menu__right-box">
