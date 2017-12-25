@@ -8,7 +8,11 @@
       autocapitalize="off"
       spellcheck="false"
       value.bind="_url"
-      class="browser-nav__url-input"
+
+      class="
+        browser-nav__url-input
+        ${active ? 'browser-nav__url-input--active' : ''}
+      "
     >
   </div>
 </template>

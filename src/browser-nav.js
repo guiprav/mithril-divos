@@ -13,14 +13,33 @@ export class BrowserNav {
     let $input =
       $(this.el).find('.browser-nav__url-input');
 
-    $input.on('focus', () => {
-      $input.select();
+    $input.on('dblclick', () => {
+      this.active = true;
+      $input.focus().select();
+    });
+
+    $input.on('click focus', ev => {
+      if (!this.active) {
+        $input.blur();
+      }
     });
 
     $input.on('keydown', ev => {
-      if (ev.key === 'Enter') {
-        this.navigate($input.val());
-        $input.blur();
+      switch (ev.key) {
+        case 'Escape':
+          requestAnimationFrame(() => {
+            this._url = this.url;
+          });
+
+          this.active = false;
+          $input.blur();
+          break;
+
+        case 'Enter':
+          this.navigate($input.val());
+          this.active = false;
+          $input.blur();
+          break;
       }
     });
   }

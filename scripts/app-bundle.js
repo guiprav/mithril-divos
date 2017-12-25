@@ -292,14 +292,33 @@ define('browser-nav',['exports', 'aurelia-framework'], function (exports, _aurel
 
       var $input = $(this.el).find('.browser-nav__url-input');
 
-      $input.on('focus', function () {
-        $input.select();
+      $input.on('dblclick', function () {
+        _this.active = true;
+        $input.focus().select();
+      });
+
+      $input.on('click focus', function (ev) {
+        if (!_this.active) {
+          $input.blur();
+        }
       });
 
       $input.on('keydown', function (ev) {
-        if (ev.key === 'Enter') {
-          _this.navigate($input.val());
-          $input.blur();
+        switch (ev.key) {
+          case 'Escape':
+            requestAnimationFrame(function () {
+              _this._url = _this.url;
+            });
+
+            _this.active = false;
+            $input.blur();
+            break;
+
+          case 'Enter':
+            _this.navigate($input.val());
+            _this.active = false;
+            $input.blur();
+            break;
         }
       });
     };
@@ -1071,7 +1090,9 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
 
       this.$el.resizable({ handles: 'all' }).draggable();
 
-      this.$el.on('dragstart', function () {
+      this.$el.on('click', function () {
+        return _this.makeActive();
+      }).on('dragstart', function () {
         return _this.makeActive();
       }).on('resizestart', function () {
         return _this.makeActive();
@@ -1234,8 +1255,8 @@ define('text!app.html', ['module'], function(module) { module.exports = "<templa
 define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\");\n@font-face {\n  font-family: 'Droid Sans Mono Awesome';\n  font-style: normal;\n  font-weight: 400;\n  src: url(\"droid-sans-mono-awesome.ttf\");\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  --desktop-menu-bg: #1d1f21;\n  --desktop-menu-bg-2: #282a2e;\n  --green-text: #b5bd68;\n  --grey-text: #373b41;\n  --purple-text: #b294bb;\n  --red-text: #c66;\n  --white-text: #c5c8c6;\n  --yellow-text: #f0c674;\n  display: flex;\n  flex-direction: column;\n  width: 100vw;\n  height: 100vh;\n  overflow: hidden;\n  margin: 0;\n  font-family: 'Droid Sans Mono Awesome', monospace;\n  font-size: 15px;\n  background-color: #000;\n  background-image: url(\"wallpaper.jpg\");\n  background-size: cover;\n}\n.left-sep {\n  position: relative;\n  margin-left: 1.4em;\n  padding-left: 0.25em;\n  padding-right: 0.45em;\n  background-color: var(--bg-color);\n}\n.left-sep:after {\n  content: '';\n  position: absolute;\n  right: 100%;\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-right-color: var(--bg-color);\n}\n.left-sep:before {\n  content: '';\n  position: absolute;\n  right: calc(100% + 1px);\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-right-color: var(--sep-color);\n}\n.right-sep {\n  position: relative;\n  margin-right: 1.4em;\n  padding-right: 0.25em;\n  padding-left: 0.45em;\n  background-color: var(--bg-color);\n}\n.right-sep:after {\n  content: '';\n  position: absolute;\n  left: 100%;\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-left-color: var(--bg-color);\n}\n.right-sep:before {\n  content: '';\n  position: absolute;\n  left: calc(100% + 1px);\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-left-color: var(--sep-color);\n}\n.join-left-sep {\n  padding-left: 2em;\n  margin-left: -2em;\n}\n.join-right-sep {\n  padding-right: 2em;\n  margin-right: -2em;\n}\n.ui-resizable {\n  position: relative;\n}\n.ui-resizable-handle {\n  position: absolute;\n  font-size: 0.1px;\n  display: block;\n}\n.ui-resizable-disabled .ui-resizable-handle,\n.ui-resizable-autohide .ui-resizable-handle {\n  display: none;\n}\n.ui-resizable-n {\n  cursor: n-resize;\n  height: 7px;\n  width: 100%;\n  top: -5px;\n  left: 0;\n}\n.ui-resizable-s {\n  cursor: s-resize;\n  height: 7px;\n  width: 100%;\n  bottom: -5px;\n  left: 0;\n}\n.ui-resizable-e {\n  cursor: e-resize;\n  width: 7px;\n  right: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-w {\n  cursor: w-resize;\n  width: 7px;\n  left: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-se {\n  cursor: se-resize;\n  width: 12px;\n  height: 12px;\n  right: 1px;\n  bottom: 1px;\n}\n.ui-resizable-sw {\n  cursor: sw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  bottom: -5px;\n}\n.ui-resizable-nw {\n  cursor: nw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  top: -5px;\n}\n.ui-resizable-ne {\n  cursor: ne-resize;\n  width: 9px;\n  height: 9px;\n  right: -5px;\n  top: -5px;\n}\n"; });
 define('text!browser-frame.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser-frame.css\"></require>\n\n  <div ref=\"el\" class=\"browser-frame\">\n    <iframe class=\"browser-frame__iframe\"></iframe>\n  </div>\n</template>\n"; });
 define('text!browser-frame.css', ['module'], function(module) { module.exports = "browser-frame {\n  position: relative;\n  flex-grow: 1;\n}\n.browser-frame {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  border: 1px solid #757575;\n  border-top: 0;\n  background-color: #fff;\n}\n.browser-frame__iframe {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n.ui-draggable-dragging .browser-frame__iframe,\n.ui-resizable-resizing .browser-frame__iframe {\n  pointer-events: none;\n}\n"; });
-define('text!browser-nav.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser-nav.css\"></require>\n\n  <div ref=\"el\" class=\"browser-nav\">\n    <input\n      autocomplete=\"off\"\n      autocorrect=\"off\"\n      autocapitalize=\"off\"\n      spellcheck=\"false\"\n      value.bind=\"_url\"\n      class=\"browser-nav__url-input\"\n    >\n  </div>\n</template>\n"; });
-define('text!browser-nav.css', ['module'], function(module) { module.exports = ".browser-nav__url-input {\n  width: 100%;\n  height: 22px;\n  border: 0;\n  padding: 0 7px;\n  padding-top: 2px;\n  background-color: var(--desktop-menu-bg);\n  color: #fff;\n}\n.browser-nav__url-input:focus {\n  outline: none;\n}\n"; });
+define('text!browser-nav.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser-nav.css\"></require>\n\n  <div ref=\"el\" class=\"browser-nav\">\n    <input\n      autocomplete=\"off\"\n      autocorrect=\"off\"\n      autocapitalize=\"off\"\n      spellcheck=\"false\"\n      value.bind=\"_url\"\n\n      class=\"\n        browser-nav__url-input\n        ${active ? 'browser-nav__url-input--active' : ''}\n      \"\n    >\n  </div>\n</template>\n"; });
+define('text!browser-nav.css', ['module'], function(module) { module.exports = ".browser-nav__url-input {\n  width: 100%;\n  height: 22px;\n  border: 0;\n  padding: 0 7px;\n  padding-top: 2px;\n  background-color: var(--desktop-menu-bg);\n  color: #fff;\n  cursor: default;\n}\n.browser-nav__url-input:focus {\n  outline: none;\n}\n.browser-nav__url-input--active {\n  cursor: initial;\n}\n"; });
 define('text!browser.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser.css\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div class=\"browser\">\n    <browser-nav url.two-way=\"url\"></browser-nav>\n    <browser-frame url.two-way=\"url\"></browser-frame>\n  </div>\n</template>\n"; });
 define('text!browser.css', ['module'], function(module) { module.exports = ".wnd--vm_browser.wnd--floating {\n  overflow: hidden;\n  border-radius: 4px;\n}\n.browser {\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  height: 100%;\n}\n"; });
 define('text!desktop-menu-tags.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./desktop-menu-tags.css\"></require>\n\n  <div class=\"desktop-menu-tags right-sep\">\n    <button\n      repeat.for=\"tag of tags\"\n      click.delegate=\"switchTagCmd($index + 1)\"\n\n      class=\"\n        desktop-menu-tags__tag\n        desktop-menu-tags__tag--${tag.name}\n        ${tag === active ?\n        'desktop-menu-tags__tag--active' : ''}\n      \"\n    >\n      ${tag.sym}\n    </button>\n  </div>\n</template>\n"; });
@@ -1250,8 +1271,8 @@ define('text!menu-netmon.html', ['module'], function(module) { module.exports = 
 define('text!menu-netmon.css', ['module'], function(module) { module.exports = ".menu-netmon {\n  display: flex;\n}\n.menu-netmon__rx {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--green-text);\n}\n.menu-netmon__tx {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--red-text);\n}\n"; });
 define('text!menu-vol-ctrl.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-vol-ctrl.css\"></require>\n\n  <div class=\"menu-vol-ctrl left-sep join-right-sep\">\n    &#xe13d; ${_volume}%\n  </div>\n</template>\n"; });
 define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports = ".menu-vol-ctrl {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg-2);\n  color: var(--purple-text);\n}\n"; });
-define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${wmRoot.active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${wmRoot.active.title || wmRoot.active.name || name}\n  </div>\n</template>\n"; });
 define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
+define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${wmRoot.active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${wmRoot.active.title || wmRoot.active.name || name}\n  </div>\n</template>\n"; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    tag.bind=\"wnd.tag\"\n    vm.bind=\"wnd.vm\"\n    view-model.ref=\"wnd.ref\"\n  ></wnd>\n</template>\n"; });
 define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
 define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"\n    wnd\n    wnd--tag_${tag}\n    wnd--vm_${vm}\n    ${active ? 'wnd--active' : ''}\n    ${maximized ? 'wnd--maximized' : 'wnd--floating'}\n  \">\n    <compose\n      view-model=\"./${vm}\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });

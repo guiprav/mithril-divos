@@ -53,6 +53,7 @@ export class Wnd {
       .draggable();
 
     this.$el
+      .on('click', () => this.makeActive())
       .on('dragstart', () => this.makeActive())
       .on('resizestart', () => this.makeActive());
 
