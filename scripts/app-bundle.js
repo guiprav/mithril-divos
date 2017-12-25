@@ -561,105 +561,6 @@ define('wm-root',["exports"], function (exports) {
     _classCallCheck(this, WmRoot);
   };
 });
-define('wnd-title',['exports', 'jquery', 'aurelia-framework'], function (exports, _jquery, _aureliaFramework) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.WndTitle = undefined;
-
-  var _jquery2 = _interopRequireDefault(_jquery);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  function _initDefineProp(target, property, descriptor, context) {
-    if (!descriptor) return;
-    Object.defineProperty(target, property, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      writable: descriptor.writable,
-      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-    });
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-    var desc = {};
-    Object['ke' + 'ys'](descriptor).forEach(function (key) {
-      desc[key] = descriptor[key];
-    });
-    desc.enumerable = !!desc.enumerable;
-    desc.configurable = !!desc.configurable;
-
-    if ('value' in desc || desc.initializer) {
-      desc.writable = true;
-    }
-
-    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-      return decorator(target, property, desc) || desc;
-    }, desc);
-
-    if (context && desc.initializer !== void 0) {
-      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-      desc.initializer = undefined;
-    }
-
-    if (desc.initializer === void 0) {
-      Object['define' + 'Property'](target, property, desc);
-      desc = null;
-    }
-
-    return desc;
-  }
-
-  function _initializerWarningHelper(descriptor, context) {
-    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-  }
-
-  var _desc, _value, _class, _descriptor, _descriptor2;
-
-  var WndTitle = exports.WndTitle = (_class = function () {
-    function WndTitle() {
-      _classCallCheck(this, WndTitle);
-
-      _initDefineProp(this, 'looks', _descriptor, this);
-
-      _initDefineProp(this, 'maximized', _descriptor2, this);
-    }
-
-    WndTitle.prototype.toggleMaximized = function toggleMaximized() {
-      this.maximized = !this.maximized;
-    };
-
-    WndTitle.prototype.attached = function attached() {
-      var _this = this;
-
-      (0, _jquery2.default)(this.el).dblclick(function () {
-        !_this.maximized && _this.toggleMaximized();
-      });
-    };
-
-    return WndTitle;
-  }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'looks', [_aureliaFramework.bindable], {
-    enumerable: true,
-    initializer: function initializer() {
-      return 'default';
-    }
-  }), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'maximized', [_aureliaFramework.bindable], {
-    enumerable: true,
-    initializer: null
-  })), _class);
-});
 define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (exports, _jquery, _aureliaFramework) {
   'use strict';
 
@@ -932,12 +833,10 @@ define('text!menu-netmon.html', ['module'], function(module) { module.exports = 
 define('text!menu-netmon.css', ['module'], function(module) { module.exports = ".menu-netmon {\n  display: flex;\n}\n.menu-netmon__rx {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--green-text);\n}\n.menu-netmon__tx {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--red-text);\n}\n"; });
 define('text!menu-vol-ctrl.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-vol-ctrl.css\"></require>\n\n  <div class=\"menu-vol-ctrl left-sep join-right-sep\">\n    &#xe13d; ${_volume}%\n  </div>\n</template>\n"; });
 define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports = ".menu-vol-ctrl {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg-2);\n  color: var(--purple-text);\n}\n"; });
-define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n  <require from=\"./wnd-title\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    <template if.bind=\"!active.maximized\">\n      ${active.name || name}\n    </template>\n\n    <template if.bind=\"active.maximized\">\n      <wnd-title\n        looks=\"inline\"\n        maximized.two-way=\"active.maximized\"\n      >\n        <span slot=\"title\">\n          ${active.title || active.name}\n        </span>\n      </wnd-title>\n    </template>\n  </div>\n</template>\n"; });
 define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
+define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${active.title || active.name || name}\n  </div>\n</template>\n"; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd name=\"Web Browser\"></wnd>\n</template>\n"; });
 define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: relative;\n  flex-grow: 1;\n}\n"; });
-define('text!wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd-title.css\"></require>\n\n  <div ref=\"el\" class=\"\n    wnd-title\n    wnd-title--${looks}\n  \">\n    <div class=\"wnd-title__left-box\">\n      <button class=\"wnd-title__close-btn\">\n      </button>\n\n      <button\n        class=\"wnd-title__max-toggle\"\n        click.delegate=\"toggleMaximized()\"\n      >\n        [max]\n      </button>\n    </div>\n\n    <div class=\"wnd-title__title\">\n      <slot name=\"title\"></slot>\n    </div>\n  </div>\n</template>\n"; });
-define('text!wnd-title.css', ['module'], function(module) { module.exports = ".wnd-title {\n  position: relative;\n  display: flex;\n  color: #fff;\n  user-select: none;\n  cursor: default;\n}\n.wnd-title__close-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 17px;\n  height: 17px;\n  border: 1px solid #43423d;\n  border-radius: 50%;\n}\n.wnd-title__close-btn {\n  background-image: linear-gradient(to bottom, #f28463 0%, #db4e1d 100%);\n  color: #563f35;\n  text-shadow: 0 1px rgba(200,200,200,0.35);\n}\n.wnd-title__close-btn:before {\n  content: '×';\n}\n.wnd-title__max-toggle {\n  margin-left: 10px;\n}\n.wnd-title__title {\n  margin-left: 10px;\n}\n.wnd-title--default {\n  height: 28px;\n  border-top-left-radius: 5px;\n  border-top-right-radius: 5px;\n  padding: 5px 10px;\n  background-image: linear-gradient(to bottom, #626055 0%, #41403b 100%);\n}\n.wnd-title--default:before {\n  content: '';\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 1px;\n  height: 26px;\n  border-radius: 5px;\n  box-shadow: inset 0px 2px 0px -1px rgba(150,150,150,0.15);\n  pointer-events: none;\n}\n"; });
-define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n  <require from=\"./wnd-title\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : ''\n  }\">\n    <wnd-title maximized.two-way=\"maximized\">\n      <span slot=\"title\">\n        ${title || name}\n      </span>\n    </wnd-title>\n\n    <browser-nav\n      url.bind=\"url\"\n    ></browser-nav>\n\n    <browser-frame\n      url.bind=\"url\"\n    ></browser-frame>\n  </div>\n</template>\n"; });
+define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : ''\n  }\">\n    <browser-nav\n      url.bind=\"url\"\n    ></browser-nav>\n\n    <browser-frame\n      url.bind=\"url\"\n    ></browser-frame>\n  </div>\n</template>\n"; });
 define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.wnd--maximized wnd-title {\n  display: none;\n}\n"; });
 //# sourceMappingURL=app-bundle.js.map

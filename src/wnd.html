@@ -1,18 +1,11 @@
 <template>
   <require from="./wnd.css"></require>
-  <require from="./wnd-title"></require>
   <require from="./browser-nav"></require>
   <require from="./browser-frame"></require>
 
   <div ref="el" class="wnd ${
     maximized ? 'wnd--maximized' : ''
   }">
-    <wnd-title maximized.two-way="maximized">
-      <span slot="title">
-        ${title || name}
-      </span>
-    </wnd-title>
-
     <browser-nav
       url.bind="url"
     ></browser-nav>
