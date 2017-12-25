@@ -59,6 +59,8 @@ export class Wnd {
 
     this.maximizedChanged();
     this.onFrame();
+
+    this.active = true;
   }
 
   kill() {
