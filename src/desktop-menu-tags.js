@@ -22,7 +22,13 @@ export class DesktopMenuTags {
     ];
 
     this.active = this.tags[0];
+  }
 
+  attached() {
     window.desktopMenuTags = this;
+  }
+
+  dettached() {
+    delete window.desktopMenuTags;
   }
 }
