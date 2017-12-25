@@ -1,9 +1,9 @@
 export class DesktopMenu {
   attached() {
-    window.mTop = this;
+    window.desktopMenu = this;
   }
 
   dettached() {
-    delete window.mTop;
+    delete window.desktopMenu;
   }
 }

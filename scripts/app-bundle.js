@@ -22,8 +22,6 @@ define('app',['exports'], function (exports) {
         var k = _arr[_i];
         this[k] = this[k].bind(this);
       }
-
-      window.app = this;
     }
 
     App.prototype.attached = function attached() {
@@ -43,6 +41,8 @@ define('app',['exports'], function (exports) {
 
         document.addEventListener(k, this.onKeyboardEvent);
       }
+
+      window.app = this;
     };
 
     App.prototype.dettached = function dettached() {
@@ -62,6 +62,8 @@ define('app',['exports'], function (exports) {
 
         document.removeEventListener(k, this.onKeyboardEvent);
       }
+
+      delete window.app;
     };
 
     App.prototype.onKeyboardEvent = function onKeyboardEvent(ev) {
@@ -316,11 +318,11 @@ define('desktop-menu',["exports"], function (exports) {
     }
 
     DesktopMenu.prototype.attached = function attached() {
-      window.mTop = this;
+      window.desktopMenu = this;
     };
 
     DesktopMenu.prototype.dettached = function dettached() {
-      delete window.mTop;
+      delete window.desktopMenu;
     };
 
     return DesktopMenu;
@@ -769,7 +771,7 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
       this.maximizedChanged();
       this.onFrame();
 
-      window.mTop.activeApp = this;
+      window.desktopMenu.activeApp = this;
     };
 
     Wnd.prototype.dettached = function dettached() {
@@ -913,8 +915,8 @@ define('text!menu-netmon.html', ['module'], function(module) { module.exports = 
 define('text!menu-netmon.css', ['module'], function(module) { module.exports = ".menu-netmon {\n  display: flex;\n}\n.menu-netmon__rx {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--green-text);\n}\n.menu-netmon__tx {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--red-text);\n}\n"; });
 define('text!menu-vol-ctrl.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-vol-ctrl.css\"></require>\n\n  <div class=\"menu-vol-ctrl left-sep join-right-sep\">\n    &#xe13d; ${_volume}%\n  </div>\n</template>\n"; });
 define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports = ".menu-vol-ctrl {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg-2);\n  color: var(--purple-text);\n}\n"; });
-define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
 define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${active.title || active.name || name}\n  </div>\n</template>\n"; });
+define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    view-model=\"./${wnd}\"\n  ></wnd>\n</template>\n"; });
 define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
 define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : 'wnd--floating'\n  }\">\n    <compose\n      view-model.bind=\"viewModel\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });

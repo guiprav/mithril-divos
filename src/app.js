@@ -9,14 +9,14 @@ export class App {
     for (let k of ['onKeyboardEvent']) {
       this[k] = this[k].bind(this);
     }
-
-    window.app = this;
   }
 
   attached() {
     for (let k of this.keyboardEventNames) {
       document.addEventListener(k, this.onKeyboardEvent);
     }
+
+    window.app = this;
   }
 
   dettached() {
@@ -25,6 +25,8 @@ export class App {
         k, this.onKeyboardEvent
       );
     }
+
+    delete window.app;
   }
 
   onKeyboardEvent(ev) {

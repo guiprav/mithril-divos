@@ -44,7 +44,7 @@ export class Wnd {
     this.maximizedChanged();
     this.onFrame();
 
-    window.mTop.activeApp = this;
+    window.desktopMenu.activeApp = this;
   }
 
   dettached() {
