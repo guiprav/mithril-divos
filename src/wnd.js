@@ -43,13 +43,8 @@ export class Wnd {
     );
 
     this.$el
-      .resizable({
-        containment: 'wm-root',
-        handles: 'all',
-      })
-      .draggable({
-        handle: '.wnd-title',
-      });
+      .resizable({ handles: 'all' })
+      .draggable();
 
     this.maximizedChanged();
     this.onFrame();

@@ -11,11 +11,69 @@ define('app',['exports'], function (exports) {
     }
   }
 
-  var App = exports.App = function App() {
-    _classCallCheck(this, App);
+  var App = exports.App = function () {
+    function App() {
+      _classCallCheck(this, App);
 
-    this.message = 'Hello World!';
-  };
+      this.keyboardEventNames = ['keydown', 'keypress', 'keyup'];
+      var _arr = ['onKeyboardEvent'];
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        var k = _arr[_i];
+        this[k] = this[k].bind(this);
+      }
+
+      window.app = this;
+    }
+
+    App.prototype.attached = function attached() {
+      for (var _iterator = this.keyboardEventNames, _isArray = Array.isArray(_iterator), _i2 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+        var _ref;
+
+        if (_isArray) {
+          if (_i2 >= _iterator.length) break;
+          _ref = _iterator[_i2++];
+        } else {
+          _i2 = _iterator.next();
+          if (_i2.done) break;
+          _ref = _i2.value;
+        }
+
+        var k = _ref;
+
+        document.addEventListener(k, this.onKeyboardEvent);
+      }
+    };
+
+    App.prototype.dettached = function dettached() {
+      for (var _iterator2 = this.keyboardEventNames, _isArray2 = Array.isArray(_iterator2), _i3 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+        var _ref2;
+
+        if (_isArray2) {
+          if (_i3 >= _iterator2.length) break;
+          _ref2 = _iterator2[_i3++];
+        } else {
+          _i3 = _iterator2.next();
+          if (_i3.done) break;
+          _ref2 = _i3.value;
+        }
+
+        var k = _ref2;
+
+        document.removeEventListener(k, this.onKeyboardEvent);
+      }
+    };
+
+    App.prototype.onKeyboardEvent = function onKeyboardEvent(ev) {
+      switch (ev.key) {
+        case 'Meta':
+          this.metaKey = ev.type === 'keydown';
+          break;
+      }
+    };
+
+    return App;
+  }();
 });
 define('browser-frame',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
   'use strict';
@@ -687,11 +745,8 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
       this.title = this.title || this.url.replace(/^https?:\/\/|\/.+$/g, '');
 
       this.$el.resizable({
-        containment: 'wm-root',
         handles: 'all'
-      }).draggable({
-        handle: '.wnd-title'
-      });
+      }).draggable();
 
       this.maximizedChanged();
       this.onFrame();
@@ -815,7 +870,7 @@ define('resources/index',["exports"], function (exports) {
   exports.configure = configure;
   function configure(config) {}
 });
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./app.css\"></require>\n\n  <require from=\"./desktop-menu\"></require>\n  <require from=\"./wm-root\"></require>\n\n  <desktop-menu></desktop-menu>\n  <wm-root></wm-root>\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./app.css\"></require>\n\n  <require from=\"./desktop-menu\"></require>\n  <require from=\"./wm-root\"></require>\n\n  <div class=\"\n    app\n    ${metaKey ? 'meta-key' : ''}\n  \">\n    <desktop-menu></desktop-menu>\n    <wm-root></wm-root>\n  </div>\n</template>\n"; });
 define('text!app.css', ['module'], function(module) { module.exports = "@import url(\"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\");\n@font-face {\n  font-family: 'Droid Sans Mono Awesome';\n  font-style: normal;\n  font-weight: 400;\n  src: url(\"droid-sans-mono-awesome.ttf\");\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  --desktop-menu-bg: #1d1f21;\n  --desktop-menu-bg-2: #282a2e;\n  --green-text: #b5bd68;\n  --grey-text: #373b41;\n  --purple-text: #b294bb;\n  --red-text: #c66;\n  --white-text: #c5c8c6;\n  --yellow-text: #f0c674;\n  display: flex;\n  flex-direction: column;\n  width: 100vw;\n  height: 100vh;\n  overflow: hidden;\n  margin: 0;\n  font-family: 'Droid Sans Mono Awesome', monospace;\n  font-size: 15px;\n  background-color: #000;\n  background-image: url(\"wallpaper.jpg\");\n  background-size: cover;\n}\n.left-sep {\n  position: relative;\n  margin-left: 1.4em;\n  padding-left: 0.25em;\n  padding-right: 0.45em;\n  background-color: var(--bg-color);\n}\n.left-sep:after {\n  content: '';\n  position: absolute;\n  right: 100%;\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-right-color: var(--bg-color);\n}\n.left-sep:before {\n  content: '';\n  position: absolute;\n  right: calc(100% + 1px);\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-right-color: var(--sep-color);\n}\n.right-sep {\n  position: relative;\n  margin-right: 1.4em;\n  padding-right: 0.25em;\n  padding-left: 0.45em;\n  background-color: var(--bg-color);\n}\n.right-sep:after {\n  content: '';\n  position: absolute;\n  left: 100%;\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-left-color: var(--bg-color);\n}\n.right-sep:before {\n  content: '';\n  position: absolute;\n  left: calc(100% + 1px);\n  top: 0;\n  width: 0;\n  height: 0;\n  border: solid transparent;\n  border-width: 0.74em;\n  border-left-color: var(--sep-color);\n}\n.join-left-sep {\n  padding-left: 2em;\n  margin-left: -2em;\n}\n.join-right-sep {\n  padding-right: 2em;\n  margin-right: -2em;\n}\n.ui-resizable {\n  position: relative;\n}\n.ui-resizable-handle {\n  position: absolute;\n  font-size: 0.1px;\n  display: block;\n}\n.ui-resizable-disabled .ui-resizable-handle,\n.ui-resizable-autohide .ui-resizable-handle {\n  display: none;\n}\n.ui-resizable-n {\n  cursor: n-resize;\n  height: 7px;\n  width: 100%;\n  top: -5px;\n  left: 0;\n}\n.ui-resizable-s {\n  cursor: s-resize;\n  height: 7px;\n  width: 100%;\n  bottom: -5px;\n  left: 0;\n}\n.ui-resizable-e {\n  cursor: e-resize;\n  width: 7px;\n  right: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-w {\n  cursor: w-resize;\n  width: 7px;\n  left: -5px;\n  top: 0;\n  height: 100%;\n}\n.ui-resizable-se {\n  cursor: se-resize;\n  width: 12px;\n  height: 12px;\n  right: 1px;\n  bottom: 1px;\n}\n.ui-resizable-sw {\n  cursor: sw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  bottom: -5px;\n}\n.ui-resizable-nw {\n  cursor: nw-resize;\n  width: 9px;\n  height: 9px;\n  left: -5px;\n  top: -5px;\n}\n.ui-resizable-ne {\n  cursor: ne-resize;\n  width: 9px;\n  height: 9px;\n  right: -5px;\n  top: -5px;\n}\n"; });
 define('text!browser-frame.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser-frame.css\"></require>\n\n  <div ref=\"el\" class=\"browser-frame\">\n    <iframe class=\"browser-frame__iframe\"></iframe>\n  </div>\n</template>\n"; });
 define('text!browser-frame.css', ['module'], function(module) { module.exports = "browser-frame {\n  position: relative;\n  flex-grow: 1;\n}\n.browser-frame {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  border: 1px solid #757575;\n  border-top: 0;\n  background-color: #fff;\n}\n.browser-frame__iframe {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n.ui-draggable-dragging .browser-frame__iframe,\n.ui-resizable-resizing .browser-frame__iframe {\n  pointer-events: none;\n}\n"; });
@@ -836,7 +891,7 @@ define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports =
 define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
 define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${active.title || active.name || name}\n  </div>\n</template>\n"; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd name=\"Web Browser\"></wnd>\n</template>\n"; });
-define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: relative;\n  flex-grow: 1;\n}\n"; });
-define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : ''\n  }\">\n    <browser-nav\n      url.bind=\"url\"\n    ></browser-nav>\n\n    <browser-frame\n      url.bind=\"url\"\n    ></browser-frame>\n  </div>\n</template>\n"; });
-define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.wnd--maximized wnd-title {\n  display: none;\n}\n"; });
+define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
+define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : 'wnd--floating'\n  }\">\n    <browser-nav\n      url.bind=\"url\"\n    ></browser-nav>\n\n    <browser-frame\n      url.bind=\"url\"\n    ></browser-frame>\n  </div>\n</template>\n"; });
+define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n"; });
 //# sourceMappingURL=app-bundle.js.map

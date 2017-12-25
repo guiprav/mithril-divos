@@ -4,6 +4,11 @@
   <require from="./desktop-menu"></require>
   <require from="./wm-root"></require>
 
-  <desktop-menu></desktop-menu>
-  <wm-root></wm-root>
+  <div class="
+    app
+    ${metaKey ? 'meta-key' : ''}
+  ">
+    <desktop-menu></desktop-menu>
+    <wm-root></wm-root>
+  </div>
 </template>

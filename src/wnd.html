@@ -4,7 +4,7 @@
   <require from="./browser-frame"></require>
 
   <div ref="el" class="wnd ${
-    maximized ? 'wnd--maximized' : ''
+    maximized ? 'wnd--maximized' : 'wnd--floating'
   }">
     <browser-nav
       url.bind="url"
