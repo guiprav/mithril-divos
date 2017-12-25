@@ -9,7 +9,9 @@
     ${maximized ? 'wnd--maximized' : 'wnd--floating'}
   ">
     <compose
+      view-model.ref="compose"
       view-model="./${vm}"
+      model.bind="params"
       class="wnd__compose"
     ></compose>
   </div>

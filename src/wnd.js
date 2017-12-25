@@ -16,6 +16,8 @@ export class Wnd {
   @bindable vm;
 
   constructor() {
+    this.params = { wnd: this };
+
     for (let k of ['onFrame']) {
       this[k] = this[k].bind(this);
     }

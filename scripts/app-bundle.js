@@ -333,12 +333,13 @@ define('browser-nav',['exports', 'aurelia-framework'], function (exports, _aurel
     initializer: null
   })), _class);
 });
-define('browser',['exports'], function (exports) {
+define('browser',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.Browser = undefined;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -346,11 +347,19 @@ define('browser',['exports'], function (exports) {
     }
   }
 
-  var Browser = exports.Browser = function Browser() {
-    _classCallCheck(this, Browser);
+  var Browser = exports.Browser = function () {
+    function Browser() {
+      _classCallCheck(this, Browser);
 
-    this.url = 'https://suckless.org';
-  };
+      this.url = 'https://suckless.org';
+    }
+
+    Browser.prototype.activate = function activate(data) {
+      Object.assign(this, data);
+    };
+
+    return Browser;
+  }();
 });
 define('desktop-menu-tags',['exports', 'jquery', 'aurelia-framework'], function (exports, _jquery, _aureliaFramework) {
   'use strict';
@@ -1065,8 +1074,9 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
 
       _initDefineProp(this, 'vm', _descriptor11, this);
 
-      var _arr = ['onFrame'];
+      this.params = { wnd: this };
 
+      var _arr = ['onFrame'];
       for (var _i = 0; _i < _arr.length; _i++) {
         var k = _arr[_i];
         this[k] = this[k].bind(this);
@@ -1257,7 +1267,7 @@ define('text!browser-frame.html', ['module'], function(module) { module.exports 
 define('text!browser-frame.css', ['module'], function(module) { module.exports = "browser-frame {\n  position: relative;\n  flex-grow: 1;\n}\n.browser-frame {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  border: 1px solid #757575;\n  border-top: 0;\n  background-color: #fff;\n}\n.browser-frame__iframe {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n.ui-draggable-dragging .browser-frame__iframe,\n.ui-resizable-resizing .browser-frame__iframe {\n  pointer-events: none;\n}\n"; });
 define('text!browser-nav.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser-nav.css\"></require>\n\n  <div ref=\"el\" class=\"browser-nav\">\n    <input\n      autocomplete=\"off\"\n      autocorrect=\"off\"\n      autocapitalize=\"off\"\n      spellcheck=\"false\"\n      value.bind=\"_url\"\n\n      class=\"\n        browser-nav__url-input\n        ${active ? 'browser-nav__url-input--active' : ''}\n      \"\n    >\n  </div>\n</template>\n"; });
 define('text!browser-nav.css', ['module'], function(module) { module.exports = ".browser-nav__url-input {\n  width: 100%;\n  height: 22px;\n  border: 0;\n  padding: 0 7px;\n  padding-top: 2px;\n  background-color: var(--desktop-menu-bg);\n  color: #fff;\n  cursor: default;\n}\n.browser-nav__url-input:focus {\n  outline: none;\n}\n.browser-nav__url-input--active {\n  cursor: initial;\n}\n"; });
-define('text!browser.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser.css\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div class=\"browser\">\n    <browser-nav url.two-way=\"url\"></browser-nav>\n    <browser-frame url.two-way=\"url\"></browser-frame>\n  </div>\n</template>\n"; });
+define('text!browser.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./browser.css\"></require>\n  <require from=\"./browser-nav\"></require>\n  <require from=\"./browser-frame\"></require>\n\n  <div class=\"browser\">\n    <browser-nav\n      if.bind=\"!wnd.maximized\"\n      url.two-way=\"url\"\n    ></browser-nav>\n\n    <browser-frame url.two-way=\"url\"></browser-frame>\n  </div>\n</template>\n"; });
 define('text!browser.css', ['module'], function(module) { module.exports = ".wnd--vm_browser.wnd--floating {\n  overflow: hidden;\n  border-radius: 4px;\n}\n.browser {\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  height: 100%;\n}\n"; });
 define('text!desktop-menu-tags.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./desktop-menu-tags.css\"></require>\n\n  <div class=\"desktop-menu-tags right-sep\">\n    <button\n      repeat.for=\"tag of tags\"\n      click.delegate=\"switchTagCmd($index + 1)\"\n\n      class=\"\n        desktop-menu-tags__tag\n        desktop-menu-tags__tag--${tag.name}\n        ${tag === active ?\n        'desktop-menu-tags__tag--active' : ''}\n      \"\n    >\n      ${tag.sym}\n    </button>\n  </div>\n</template>\n"; });
 define('text!desktop-menu-tags.css', ['module'], function(module) { module.exports = "desktop-menu-tags,\n.desktop-menu-tags {\n  display: flex;\n}\n.desktop-menu-tags {\n  --sep-color: var(--grey-text);\n  --bg-color: var(--desktop-menu-bg);\n}\n.desktop-menu-tags__tag {\n  position: relative;\n  display: flex;\n  line-height: inherit;\n  border: 0;\n  padding: 0;\n  padding-left: 8px;\n  padding-right: 5px;\n  font-family: inherit;\n  color: var(--grey-text);\n  background-color: transparent;\n}\n.desktop-menu-tags__tag:focus {\n  outline: none;\n}\n.desktop-menu-tags__tag:before {\n  content: '';\n  position: absolute;\n  box-sizing: border-box;\n  left: 2px;\n  top: 2px;\n  width: 3px;\n  height: 3px;\n  border: 1px solid #373b41;\n}\n.desktop-menu-tags__tag--active {\n  color: #c5c8c6;\n}\n.desktop-menu-tags__tag--active:before {\n  border: 1px solid transparent;\n  background-color: #c5c8c6;\n}\n"; });
@@ -1275,6 +1285,6 @@ define('text!menu-wnd-title.css', ['module'], function(module) { module.exports 
 define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${wmRoot.active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${wmRoot.active.title || wmRoot.active.name || name}\n  </div>\n</template>\n"; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    tag.bind=\"wnd.tag\"\n    vm.bind=\"wnd.vm\"\n    view-model.ref=\"wnd.ref\"\n  ></wnd>\n</template>\n"; });
 define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
-define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"\n    wnd\n    wnd--tag_${tag}\n    wnd--vm_${vm}\n    ${active ? 'wnd--active' : ''}\n    ${maximized ? 'wnd--maximized' : 'wnd--floating'}\n  \">\n    <compose\n      view-model=\"./${vm}\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
 define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--active {\n  z-index: 100;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n.wnd__compose {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background-color: var(--desktop-menu-bg);\n}\n"; });
+define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"\n    wnd\n    wnd--tag_${tag}\n    wnd--vm_${vm}\n    ${active ? 'wnd--active' : ''}\n    ${maximized ? 'wnd--maximized' : 'wnd--floating'}\n  \">\n    <compose\n      view-model.ref=\"compose\"\n      view-model=\"./${vm}\"\n      model.bind=\"params\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

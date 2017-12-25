@@ -4,7 +4,11 @@
   <require from="./browser-frame"></require>
 
   <div class="browser">
-    <browser-nav url.two-way="url"></browser-nav>
+    <browser-nav
+      if.bind="!wnd.maximized"
+      url.two-way="url"
+    ></browser-nav>
+
     <browser-frame url.two-way="url"></browser-frame>
   </div>
 </template>
