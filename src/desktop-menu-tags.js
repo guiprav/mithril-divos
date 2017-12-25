@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import { observable } from 'aurelia-framework';
 
+let digitsRe = /^[0-9]$/;
+
 export class DesktopMenuTags {
   tags = [];
   @observable active = null;
@@ -8,11 +10,20 @@ export class DesktopMenuTags {
   activeChanged() {
     let { active } = this;
 
+    if (!active) {
+      $('.wnd').hide();
+      return;
+    }
+
     $(`.wnd:not(.wnd--tag_${active.name})`).hide();
     $(`.wnd--tag_${active.name}`).show();
   }
 
   constructor() {
+    for (let k of ['onKeyboardEvent']) {
+      this[k] = this[k].bind(this);
+    }
+
     this.tags = [
       { name: 'web', sym: '\ue1ba' },
       { name: 'term', sym: '\ue21a' },
@@ -25,10 +36,43 @@ export class DesktopMenuTags {
   }
 
   attached() {
+    for (let ev of ['keydown', 'keypress', 'keyup']) {
+      document.addEventListener(
+        ev, this.onKeyboardEvent
+      );
+    }
+
     window.desktopMenuTags = this;
   }
 
   dettached() {
     delete window.desktopMenuTags;
+  }
+
+  onKeyboardEvent(ev) {
+    if (ev.type === 'keydown' && ev.metaKey) {
+      if (digitsRe.test(ev.key)) {
+        this.switchTagCmd(Number(ev.key));
+      }
+    }
+  }
+
+  switchTagCmd(i) {
+    if (i === 0) {
+      i = 10;
+    }
+
+    let tag = this.tags[i - 1];
+
+    if (!tag) {
+      return;
+    }
+
+    if (tag === this.active) {
+      this.active = null;
+      return;
+    }
+
+    this.active = tag;
   }
 }

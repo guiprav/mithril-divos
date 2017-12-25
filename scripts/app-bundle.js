@@ -340,10 +340,17 @@ define('desktop-menu-tags',['exports', 'jquery', 'aurelia-framework'], function 
 
   var _desc, _value, _class, _descriptor;
 
+  var digitsRe = /^[0-9]$/;
+
   var DesktopMenuTags = exports.DesktopMenuTags = (_class = function () {
     DesktopMenuTags.prototype.activeChanged = function activeChanged() {
       var active = this.active;
 
+
+      if (!active) {
+        (0, _jquery2.default)('.wnd').hide();
+        return;
+      }
 
       (0, _jquery2.default)('.wnd:not(.wnd--tag_' + active.name + ')').hide();
       (0, _jquery2.default)('.wnd--tag_' + active.name).show();
@@ -356,12 +363,59 @@ define('desktop-menu-tags',['exports', 'jquery', 'aurelia-framework'], function 
 
       _initDefineProp(this, 'active', _descriptor, this);
 
+      var _arr = ['onKeyboardEvent'];
+
+      for (var _i = 0; _i < _arr.length; _i++) {
+        var k = _arr[_i];
+        this[k] = this[k].bind(this);
+      }
+
       this.tags = [{ name: 'web', sym: '\uE1BA' }, { name: 'term', sym: '\uE21A' }, { name: 'draw', sym: '\uE858' }, { name: 'im', sym: '\uE11F' }, { name: 'game', sym: '\uE216' }];
 
       this.active = this.tags[0];
+    }
+
+    DesktopMenuTags.prototype.attached = function attached() {
+      var _arr2 = ['keydown', 'keypress', 'keyup'];
+
+      for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
+        var ev = _arr2[_i2];
+        document.addEventListener(ev, this.onKeyboardEvent);
+      }
 
       window.desktopMenuTags = this;
-    }
+    };
+
+    DesktopMenuTags.prototype.dettached = function dettached() {
+      delete window.desktopMenuTags;
+    };
+
+    DesktopMenuTags.prototype.onKeyboardEvent = function onKeyboardEvent(ev) {
+      if (ev.type === 'keydown' && ev.metaKey) {
+        if (digitsRe.test(ev.key)) {
+          this.switchTagCmd(Number(ev.key));
+        }
+      }
+    };
+
+    DesktopMenuTags.prototype.switchTagCmd = function switchTagCmd(i) {
+      if (i === 0) {
+        i = 10;
+      }
+
+      var tag = this.tags[i - 1];
+
+      if (!tag) {
+        return;
+      }
+
+      if (tag === this.active) {
+        this.active = null;
+        return;
+      }
+
+      this.active = tag;
+    };
 
     return DesktopMenuTags;
   }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'active', [_aureliaFramework.observable], {
@@ -1010,10 +1064,10 @@ define('text!menu-netmon.html', ['module'], function(module) { module.exports = 
 define('text!menu-netmon.css', ['module'], function(module) { module.exports = ".menu-netmon {\n  display: flex;\n}\n.menu-netmon__rx {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--green-text);\n}\n.menu-netmon__tx {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--red-text);\n}\n"; });
 define('text!menu-vol-ctrl.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-vol-ctrl.css\"></require>\n\n  <div class=\"menu-vol-ctrl left-sep join-right-sep\">\n    &#xe13d; ${_volume}%\n  </div>\n</template>\n"; });
 define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports = ".menu-vol-ctrl {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg-2);\n  color: var(--purple-text);\n}\n"; });
-define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
 define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${active.title || active.name || name}\n  </div>\n</template>\n"; });
+define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
 define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    tag.bind=\"wnd.tag\"\n    vm=\"./${wnd.vm}\"\n    view-model.ref=\"wnd.ref\"\n  ></wnd>\n</template>\n"; });
 define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
-define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n.wnd__compose {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background-color: var(--desktop-menu-bg);\n}\n"; });
 define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"wnd wnd--tag_${tag} ${\n    maximized ? 'wnd--maximized' : 'wnd--floating'\n  }\">\n    <compose\n      view-model.bind=\"vm\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
+define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n.wnd__compose {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background-color: var(--desktop-menu-bg);\n}\n"; });
 //# sourceMappingURL=app-bundle.js.map
