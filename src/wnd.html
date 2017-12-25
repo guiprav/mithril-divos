@@ -1,11 +1,15 @@
 <template>
   <require from="./wnd.css"></require>
 
-  <div ref="el" class="wnd wnd--tag_${tag} ${
-    maximized ? 'wnd--maximized' : 'wnd--floating'
-  }">
+  <div ref="el" class="
+    wnd
+    wnd--tag_${tag}
+    wnd--vm_${vm}
+    ${active ? 'wnd--active' : ''}
+    ${maximized ? 'wnd--maximized' : 'wnd--floating'}
+  ">
     <compose
-      view-model.bind="vm"
+      view-model="./${vm}"
       class="wnd__compose"
     ></compose>
   </div>

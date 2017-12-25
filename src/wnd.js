@@ -7,7 +7,6 @@ export class Wnd {
   @bindable name = 'Web Browser';
   @bindable title = 'Web Browser';
   @bindable maximized = true;
-  @bindable active;
   @bindable x = 70;
   @bindable y = 60;
   @bindable width = $('body').width() - 720;
@@ -38,10 +37,12 @@ export class Wnd {
       .draggable(method);
   }
 
-  activeChanged() {
-    if (this.active) {
-      wmRoot.active = this;
-    }
+  get active() {
+    return window.wmRoot && wmRoot.active === this;
+  }
+
+  makeActive() {
+    wmRoot.active = this;
   }
 
   attached() {
@@ -51,6 +52,10 @@ export class Wnd {
       .resizable({ handles: 'all' })
       .draggable();
 
+    this.$el
+      .on('dragstart', () => this.makeActive())
+      .on('resizestart', () => this.makeActive());
+
     let activeTag = desktopMenuTags.active;
 
     if (this.tag !== activeTag.name) {
@@ -59,8 +64,6 @@ export class Wnd {
 
     this.maximizedChanged();
     this.onFrame();
-
-    this.active = true;
   }
 
   kill() {
@@ -89,15 +92,8 @@ export class Wnd {
 
     requestAnimationFrame(this.onFrame);
 
-    if (this.checkFocus()) {
-      if (!this.active) {
-        this.active = true;
-      }
-    }
-    else {
-      if (this.active) {
-        this.active = false;
-      }
+    if (this.checkFocus() && !this.active) {
+      this.makeActive();
     }
 
     let draggingSel = '.ui-draggable-dragging';
