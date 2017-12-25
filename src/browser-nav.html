@@ -1,13 +1,13 @@
 <template>
   <require from="./browser-nav.css"></require>
 
-  <div class="browser-nav">
+  <div ref="el" class="browser-nav">
     <input
       autocomplete="off"
       autocorrect="off"
       autocapitalize="off"
       spellcheck="false"
-      value.bind="url"
+      value.bind="_url"
       class="browser-nav__url-input"
     >
   </div>
