@@ -4,6 +4,8 @@
 
   <wnd
     repeat.for="wnd of wnds"
-    view-model="./${wnd}"
+    tag.bind="wnd.tag"
+    vm="./${wnd.vm}"
+    view-model.ref="wnd.ref"
   ></wnd>
 </template>

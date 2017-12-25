@@ -1,3 +1,13 @@
 export class WmRoot {
-  wnds = ['browser'];
+  wnds = [
+    { tag: 'web', vm: 'browser' },
+  ];
+
+  attached() {
+    window.wmRoot = this;
+  }
+
+  dettached() {
+    delete window.wmRoot;
+  }
 }

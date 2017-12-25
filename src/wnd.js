@@ -12,7 +12,7 @@ export class Wnd {
   @bindable height = $('body').height() - 360;
   @bindable dragging;
   @bindable resizing;
-  @bindable viewModel;
+  @bindable vm;
 
   constructor() {
     for (let k of ['onFrame']) {

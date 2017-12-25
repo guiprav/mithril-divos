@@ -636,11 +636,23 @@ define('wm-root',['exports'], function (exports) {
     }
   }
 
-  var WmRoot = exports.WmRoot = function WmRoot() {
-    _classCallCheck(this, WmRoot);
+  var WmRoot = exports.WmRoot = function () {
+    function WmRoot() {
+      _classCallCheck(this, WmRoot);
 
-    this.wnds = ['browser'];
-  };
+      this.wnds = [{ tag: 'web', vm: 'browser' }];
+    }
+
+    WmRoot.prototype.attached = function attached() {
+      window.wmRoot = this;
+    };
+
+    WmRoot.prototype.dettached = function dettached() {
+      delete window.wmRoot;
+    };
+
+    return WmRoot;
+  }();
 });
 define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (exports, _jquery, _aureliaFramework) {
   'use strict';
@@ -749,7 +761,7 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
 
       _initDefineProp(this, 'resizing', _descriptor9, this);
 
-      _initDefineProp(this, 'viewModel', _descriptor10, this);
+      _initDefineProp(this, 'vm', _descriptor10, this);
 
       var _arr = ['onFrame'];
 
@@ -881,7 +893,7 @@ define('wnd',['exports', 'jquery', 'aurelia-framework', 'jquery-ui'], function (
   }), _descriptor9 = _applyDecoratedDescriptor(_class.prototype, 'resizing', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: null
-  }), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, 'viewModel', [_aureliaFramework.bindable], {
+  }), _descriptor10 = _applyDecoratedDescriptor(_class.prototype, 'vm', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: null
   })), _class);
@@ -909,16 +921,16 @@ define('text!desktop-menu.html', ['module'], function(module) { module.exports =
 define('text!desktop-menu.css', ['module'], function(module) { module.exports = "desktop-menu {\n  z-index: 100;\n}\n.desktop-menu {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  line-height: 22px;\n  background-color: var(--desktop-menu-bg);\n  color: var(--white-text);\n  user-select: none;\n  cursor: default;\n  box-shadow: 0 1px 10px rgba(0,0,0,0.5);\n}\n.desktop-menu--maximized {\n  box-shadow: none;\n}\n.desktop-menu__left-box,\n.desktop-menu__right-box {\n  display: flex;\n}\n.desktop-menu__right-box > * + * {\n  margin-left: 3px;\n}\n"; });
 define('text!menu-clock.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-clock.css\"></require>\n\n  <div class=\"menu-clock\">\n    <div class=\"menu-clock__date left-sep join-right-sep\">\n      &#xe846; ${date}\n    </div>\n\n    <div class=\"menu-clock__time left-sep\">\n      ${time}\n    </div>\n  </div>\n</template>\n"; });
 define('text!menu-clock.css', ['module'], function(module) { module.exports = ".menu-clock {\n  display: flex;\n}\n.menu-clock__date {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n}\n.menu-clock__time {\n  --sep-color: var(--white-text);\n  --bg-color: var(--desktop-menu-bg);\n}\n"; });
-define('text!menu-im.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-im.css\"></require>\n\n  <div class=\"menu-im\">\n    <div class=\"menu-im__whom left-sep\">\n      &#xe82b; ${whom}\n    </div>\n\n    <div class=\"menu-im__when left-sep join-right-sep\">\n      ${when}\n    </div>\n  </div>\n</template>\n"; });
 define('text!menu-im.css', ['module'], function(module) { module.exports = ".menu-im {\n  display: flex;\n  color: var(--yellow-text);\n}\n.menu-im__whom {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n}\n.menu-im__when {\n  --sep-color: var(--yellow-text);\n  --bg-color: var(--desktop-menu-bg);\n}\n"; });
-define('text!menu-netmon.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-netmon.css\"></require>\n\n  <div class=\"menu-netmon\">\n    <div class=\"menu-netmon__rx left-sep\">\n      &#xe8a1; ${_rx}K\n    </div>\n\n    <div class=\"menu-netmon__tx left-sep join-right-sep\">\n      &#xe8a0; ${_tx}K\n    </div>\n  </div>\n</template>\n"; });
+define('text!menu-im.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-im.css\"></require>\n\n  <div class=\"menu-im\">\n    <div class=\"menu-im__whom left-sep\">\n      &#xe82b; ${whom}\n    </div>\n\n    <div class=\"menu-im__when left-sep join-right-sep\">\n      ${when}\n    </div>\n  </div>\n</template>\n"; });
 define('text!menu-netmon.css', ['module'], function(module) { module.exports = ".menu-netmon {\n  display: flex;\n}\n.menu-netmon__rx {\n  --sep-color: var(--desktop-menu-bg);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--green-text);\n}\n.menu-netmon__tx {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg);\n  color: var(--red-text);\n}\n"; });
-define('text!menu-vol-ctrl.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-vol-ctrl.css\"></require>\n\n  <div class=\"menu-vol-ctrl left-sep join-right-sep\">\n    &#xe13d; ${_volume}%\n  </div>\n</template>\n"; });
+define('text!menu-netmon.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-netmon.css\"></require>\n\n  <div class=\"menu-netmon\">\n    <div class=\"menu-netmon__rx left-sep\">\n      &#xe8a1; ${_rx}K\n    </div>\n\n    <div class=\"menu-netmon__tx left-sep join-right-sep\">\n      &#xe8a0; ${_tx}K\n    </div>\n  </div>\n</template>\n"; });
 define('text!menu-vol-ctrl.css', ['module'], function(module) { module.exports = ".menu-vol-ctrl {\n  --sep-color: var(--desktop-menu-bg-2);\n  --bg-color: var(--desktop-menu-bg-2);\n  color: var(--purple-text);\n}\n"; });
-define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${active.title || active.name || name}\n  </div>\n</template>\n"; });
+define('text!menu-vol-ctrl.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-vol-ctrl.css\"></require>\n\n  <div class=\"menu-vol-ctrl left-sep join-right-sep\">\n    &#xe13d; ${_volume}%\n  </div>\n</template>\n"; });
 define('text!menu-wnd-title.css', ['module'], function(module) { module.exports = ""; });
-define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    view-model=\"./${wnd}\"\n  ></wnd>\n</template>\n"; });
+define('text!menu-wnd-title.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./menu-wnd-title.css\"></require>\n\n  <div class=\"menu-wnd-title ${active.maximized ?\n    'menu-wnd-title--maximized' : ''\n  }\">\n    ${active.title || active.name || name}\n  </div>\n</template>\n"; });
 define('text!wm-root.css', ['module'], function(module) { module.exports = "wm-root {\n  position: fixed;\n  left: 0;\n  top: 22px;\n  width: 100vw;\n  height: calc(100vh - 22px);\n}\n"; });
-define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : 'wnd--floating'\n  }\">\n    <compose\n      view-model.bind=\"viewModel\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
+define('text!wm-root.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wm-root.css\"></require>\n  <require from=\"./wnd\"></require>\n\n  <wnd\n    repeat.for=\"wnd of wnds\"\n    tag.bind=\"wnd.tag\"\n    vm=\"./${wnd.vm}\"\n    view-model.ref=\"wnd.ref\"\n  ></wnd>\n</template>\n"; });
 define('text!wnd.css', ['module'], function(module) { module.exports = ".wnd {\n  display: flex;\n  flex-direction: column;\n  border-top-left-radius: 6px;\n  border-top-right-radius: 6px;\n  box-shadow: 0 0 20px rgba(0,0,0,0.5);\n  transition: opacity ease 0.2s;\n}\n.wnd.ui-draggable-dragging {\n  opacity: 0.8;\n}\n.wnd--maximized {\n  position: absolute;\n  left: 0 !important;\n  right: 0 !important;\n  top: 0 !important;\n  bottom: 0 !important;\n  width: auto !important;\n  height: auto !important;\n}\n.meta-key .wnd--floating {\n  cursor: pointer;\n}\n.meta-key .wnd--floating > * {\n  pointer-events: none;\n}\n.wnd__compose {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background-color: var(--desktop-menu-bg);\n}\n"; });
+define('text!wnd.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./wnd.css\"></require>\n\n  <div ref=\"el\" class=\"wnd ${\n    maximized ? 'wnd--maximized' : 'wnd--floating'\n  }\">\n    <compose\n      view-model.bind=\"vm\"\n      class=\"wnd__compose\"\n    ></compose>\n  </div>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map
