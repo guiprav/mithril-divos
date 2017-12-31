@@ -163,6 +163,11 @@ body {
   right: -5px;
   top: -5px;
 }
+.desktop {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 .desktopMenu {
   display: flex;
   align-items: center;
@@ -174,6 +179,9 @@ body {
   cursor: default;
   box-shadow: 0 1px 10px rgba(0,0,0,0.5);
   z-index: 100;
+}
+.desktopMenu--hidden {
+  display: none;
 }
 .desktopMenu--maximized {
   box-shadow: none;
@@ -247,11 +255,9 @@ body {
   --bgColor: var(--desktopMenuBg);
 }
 .wmRoot {
-  position: fixed;
-  left: 0;
-  top: 22px;
+  position: relative;
+  flex-grow: 1;
   width: 100vw;
-  height: calc(100vh - 22px);
 }
 .wnd {
   position: absolute;
@@ -327,9 +333,11 @@ body {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  background-color: #fff;
+}
+.metalFrame--floating {
   border: 1px solid #757575;
   border-top: 0;
-  background-color: #fff;
 }
 .metalFrame-iframe {
   flex-grow: 1;
