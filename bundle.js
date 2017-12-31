@@ -35105,6 +35105,10 @@ module.exports = {
     let defaults = {
       active: true,
       maximized: true,
+      x: 70,
+      y: 60,
+      width: Math.max(320, $('body').width() - 720),
+      height: Math.max(240, $('body').height() - 360),
     };
 
     for (let k of Object.keys(defaults)) {
@@ -35119,22 +35123,75 @@ module.exports = {
     }
 
     Object.defineProperty(wnd, 'active', {
-      get: function() {
+      get: () => {
         return gWmRoot.activeWnd === wnd;
       },
 
-      set: function(active) {
+      set: active => {
         if (active) {
           gWmRoot.activeWnd = wnd;
         }
         else
-        if (this.active) {
+        if (wnd.active) {
           gWmRoot.activeWnd = null;
         }
 
         return active;
       },
     });
+
+    wnd.makeActive = () => {
+      wnd.active = true;
+      m.redraw();
+    };
+
+    wnd.onFrame = () => {
+      // FIXME: Stop once window is closed.
+      requestAnimationFrame(wnd.onFrame);
+
+      let isFocused = (
+        wnd.dom === document.activeElement ||
+        $.contains(wnd.dom, document.activeElement)
+      );
+
+      if (isFocused && !wnd.active) {
+        wnd.makeActive();
+      }
+
+      let draggingSel = '.ui-draggable-dragging';
+      let resizingSel = '.ui-resizable-resizing';
+
+      wnd.dragging = wnd.$dom.is(draggingSel);
+      wnd.resizing = wnd.$dom.is(resizingSel);
+
+      if (!wnd.maximized) {
+        if (wnd.dragging || wnd.resizing) {
+          let style = getComputedStyle(wnd.dom);
+
+          let values = {
+            x: Number(style.left),
+            y: Number(style.top),
+            width: Number(style.width),
+            height: Number(style.height),
+          };
+
+          for (let k of Object.keys(values)) {
+            if (wnd[k] === values[k]) {
+              return;
+            }
+
+            wnd[k] = values[k];
+          }
+        }
+        else {
+          wnd.$dom
+            .css('left', `${wnd.x}px`)
+            .css('top', `${wnd.y}px`)
+            .css('width', `${wnd.width}px`)
+            .css('height', `${wnd.height}px`);
+        }
+      }
+    };
   },
 
   oncreate: function(vn) {
@@ -35146,6 +35203,13 @@ module.exports = {
     wnd.$dom
       .resizable({ handles: 'all' })
       .draggable();
+
+    wnd.$dom
+      .on('click', () => wnd.makeActive())
+      .on('dragstart', () => wnd.makeActive())
+      .on('resizestart', () => wnd.makeActive());
+
+    wnd.onFrame();
   },
 
   view: function(vn) {
