@@ -9,6 +9,7 @@ module.exports = {
 
       if (gDesktop.activeTag === tag) {
         gDesktop.activeTag = null;
+        gWmRoot.activeWnd = null;
         m.redraw();
 
         return;

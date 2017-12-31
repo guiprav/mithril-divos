@@ -209,6 +209,7 @@ module.exports = {
 
       if (gDesktop.activeTag === tag) {
         gDesktop.activeTag = null;
+        gWmRoot.activeWnd = null;
         m.redraw();
 
         return;
@@ -267,17 +268,39 @@ module.exports = {
 };
 
 },{}],9:[function(require,module,exports){
+let derp = true;
+
 module.exports = {
   view: () => {
-    let active = gWmRoot.active || {};
+    let activeWnd = gWmRoot.activeWnd || {
+      component: {},
+    };
+
+    let wndSwitching = false;
+
+    // TODO: Report Mithril bug and remove this workaround.
+    if (activeWnd.key && activeWnd !== this.lastWnd) {
+      wndSwitching = true;
+      this.lastWnd = activeWnd;
+
+      requestAnimationFrame(() => {
+        m.redraw();
+      });
+    }
+
+    let title = (
+      (!wndSwitching && activeWnd.menuWndTitleVNode) ||
+      activeWnd.title ||
+      activeWnd.name ||
+      activeWnd.component.name ||
+      ''
+    );
 
     return m('.menuWndTitle', {
       class: makeClassString({
         'menuWndTitle--maximized': gWmRoot.maximized,
       }),
-    }, [
-      active.title || active.name,
-    ]);
+    }, title);
   },
 };
 
@@ -291,6 +314,21 @@ window.metal = module.exports = {
   oninit: function(vn) {
     this.wnd = vn.attrs.wnd;
     this.wnd.componentState = this;
+
+    this.wnd.title = 'Metal Web Browser';
+
+    Object.defineProperty(this.wnd, 'menuWndTitleVNode', {
+      get: () => {
+        if (!this.wnd.maximized) {
+          return null;
+        }
+
+        return m(metalNav, {
+          metal: this,
+          inMenuWndTitle: true,
+        });
+      },
+    });
 
     this.url = 'https://suckless.org';
   },
@@ -325,19 +363,47 @@ module.exports = {
   },
 
   oncreate: function(vn) {
-    let input = vn.dom.querySelector('input');
+    let $input = $(vn.dom).find('.metalNav-urlInput');
 
-    input.addEventListener('keydown', ev => {
-      if (ev.key !== 'Enter') {
-        return;
-      }
+    $input
+      .on('dblclick', () => {
+        if (this.focus) {
+          return;
+        }
 
-      this.metal.url = input.value;
-      m.redraw();
-    });
+        this.focus = true;
+        $input.focus().select();
+      })
+      .on('focus', () => {
+        if (this.focus) {
+          return;
+        }
+
+        $input.blur();
+      })
+      .on('blur', () => {
+        this.focus = false;
+      })
+      .on('keydown', ev => {
+        switch (ev.key) {
+          case 'Escape':
+            $input.val(this.metal.url).blur();
+            break;
+
+          case 'Enter':
+            this.metal.url = $input.val();
+
+            $input.blur();
+            m.redraw();
+
+            break;
+        }
+      });
   },
 
-  view: function() {
+  view: function(vn) {
+    let { inMenuWndTitle } = vn.attrs;
+
     return m('.metalNav', [
       m('input.metalNav-urlInput', {
         autocomplete: 'off',
@@ -348,6 +414,8 @@ module.exports = {
 
         class: makeClassString({
           'metalNav-urlInput--active': this.metal.wnd.active,
+          'metalNav-urlInput--inWnd': !inMenuWndTitle,
+          'metalNav-urlInput--inMenuWndTitle': inMenuWndTitle,
         }),
       }),
     ]);

@@ -8,6 +8,21 @@ window.metal = module.exports = {
     this.wnd = vn.attrs.wnd;
     this.wnd.componentState = this;
 
+    this.wnd.title = 'Metal Web Browser';
+
+    Object.defineProperty(this.wnd, 'menuWndTitleVNode', {
+      get: () => {
+        if (!this.wnd.maximized) {
+          return null;
+        }
+
+        return m(metalNav, {
+          metal: this,
+          inMenuWndTitle: true,
+        });
+      },
+    });
+
     this.url = 'https://suckless.org';
   },
 
