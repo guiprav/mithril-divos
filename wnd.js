@@ -142,11 +142,17 @@ module.exports = {
   view: function(vn) {
     let wnd = vn.attrs;
 
+    let onAnotherTag = (
+      !gDesktop.activeTag ||
+      gDesktop.activeTag.name !== wnd.desktopTag
+    );
+
     return m('.wnd', {
       key: wnd.key, class: makeClassString({
         'wnd--tag_': wnd.desktopTag,
         'wnd--comp_': wnd.component.name,
         'wnd--active': wnd.active,
+        'wnd--onAnotherTag': onAnotherTag,
         'wnd--maximized': wnd.maximized,
         'wnd--floating': !wnd.maximized,
       }),

@@ -2,6 +2,18 @@
 let desktopMenu = require('./desktopMenu');
 let wmRoot = require('./wmRoot');
 
+window.gDesktop = {
+  tags: [
+    { name: 'web', sym: '\ue1ba' },
+    { name: 'term', sym: '\ue21a' },
+    { name: 'draw', sym: '\ue858' },
+    { name: 'im', sym: '\ue11f' },
+    { name: 'game', sym: '\ue216' },
+  ],
+};
+
+gDesktop.activeTag = gDesktop.tags[0];
+
 module.exports = {
   view: () => m('.desktop', [
     m(desktopMenu),
@@ -9,8 +21,9 @@ module.exports = {
   ]),
 };
 
-},{"./desktopMenu":2,"./wmRoot":16}],2:[function(require,module,exports){
+},{"./desktopMenu":2,"./wmRoot":17}],2:[function(require,module,exports){
 let menuClock = require('./menuClock');
+let menuDesktopTags = require('./menuDesktopTags');
 let menuVolCtrl = require('./menuVolCtrl');
 let menuWndTitle = require('./menuWndTitle');
 
@@ -21,6 +34,7 @@ module.exports = {
     }),
   }, [
     m('.desktopMenu-leftBox', [
+      m(menuDesktopTags),
       m(menuWndTitle),
     ]),
 
@@ -31,7 +45,7 @@ module.exports = {
   ]),
 };
 
-},{"./menuClock":6,"./menuVolCtrl":7,"./menuWndTitle":8}],3:[function(require,module,exports){
+},{"./menuClock":6,"./menuDesktopTags":7,"./menuVolCtrl":8,"./menuWndTitle":9}],3:[function(require,module,exports){
 window.$ = window.jQuery = require('jquery');
 require('jquery-ui-dist/jquery-ui');
 
@@ -48,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   m.mount(document.body, desktop);
 });
 
-},{"./desktop":1,"./kbd":4,"./makeClassString":5,"./metal":9,"./wmRoot":16,"jquery":13,"jquery-ui-dist/jquery-ui":12,"mithril":14}],4:[function(require,module,exports){
+},{"./desktop":1,"./kbd":4,"./makeClassString":5,"./metal":10,"./wmRoot":17,"jquery":14,"jquery-ui-dist/jquery-ui":13,"mithril":15}],4:[function(require,module,exports){
 window.gKbd = {
   bindings: {},
   keysDown: {},
@@ -183,7 +197,61 @@ module.exports = {
   },
 };
 
-},{"moment":15}],7:[function(require,module,exports){
+},{"moment":16}],7:[function(require,module,exports){
+module.exports = {
+  oninit: function() {
+    this.switchCmd = num => {
+      let tag = gDesktop.tags[num - 1];
+
+      if (!tag) {
+        return;
+      }
+
+      if (gDesktop.activeTag === tag) {
+        gDesktop.activeTag = null;
+        m.redraw();
+
+        return;
+      }
+
+      gDesktop.activeTag = tag;
+
+      if (tag.lastActiveWnd) {
+        tag.lastActiveWnd.makeActive();
+      }
+      else {
+        gWmRoot.activeWnd = null;
+      }
+
+      m.redraw();
+    };
+
+    for (let i = 1; i <= 10; ++i) {
+      gKbd.addBinding(`Meta-${i}`, () => {
+        this.switchCmd(i);
+      });
+    }
+  },
+
+  view: function() {
+    return m('.menuDesktopTags.rightSep', [
+      ...gDesktop.tags.map((tag, i) => {
+        let active = tag === gDesktop.activeTag;
+
+        return m('button.menuDesktopTags-tag', {
+          class: makeClassString({
+            'menuDesktopTags-tag--': tag.name,
+            'menuDesktopTags-tag--active': active,
+          }),
+
+          onclick: () => this.switchCmd(i + 1),
+        }, tag.sym);
+      }),
+    ]);
+  },
+};
+
+},{}],8:[function(require,module,exports){
 module.exports = {
   oninit: function() {
     this.volume = 1;
@@ -198,7 +266,7 @@ module.exports = {
   },
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = {
   view: () => {
     let active = gWmRoot.active || {};
@@ -213,7 +281,7 @@ module.exports = {
   },
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 let metalNav = require('./metalNav');
 let metalFrame = require('./metalFrame');
 
@@ -235,7 +303,7 @@ window.metal = module.exports = {
   },
 };
 
-},{"./metalFrame":10,"./metalNav":11}],10:[function(require,module,exports){
+},{"./metalFrame":11,"./metalNav":12}],11:[function(require,module,exports){
 module.exports = {
   oninit: function(vn) {
     this.metal = vn.attrs.metal;
@@ -250,7 +318,7 @@ module.exports = {
   },
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = {
   oninit: function(vn) {
     this.metal = vn.attrs.metal;
@@ -286,7 +354,7 @@ module.exports = {
   },
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*! jQuery UI - v1.12.1 - 2016-09-14
 * http://jqueryui.com
 * Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-1-7.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
@@ -18993,7 +19061,7 @@ var widgetsTooltip = $.ui.tooltip;
 
 
 }));
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -29248,7 +29316,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (global){
 ;(function() {
 "use strict"
@@ -30508,7 +30576,7 @@ if (typeof module !== "undefined") module["exports"] = m
 else window.m = m
 }());
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 //! moment.js
 //! version : 2.20.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -35045,7 +35113,7 @@ return hooks;
 
 })));
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 require('./kbd');
 
 let metal = require('./metal');
@@ -35055,6 +35123,33 @@ let nextWndKey = 0;
 
 window.gWmRoot = {
   wnds: [],
+
+  get activeWnd() {
+    return gWmRoot._activeWnd;
+  },
+
+  set activeWnd(wnd) {
+    let tag = (() => {
+      if (wnd) {
+        return gDesktop.tags.find(
+          x => x.name === wnd.desktopTag
+        );
+      }
+      else {
+        return gDesktop.activeTag;
+      }
+    })();
+
+    if (tag) {
+      tag.lastActiveWnd = wnd;
+    }
+
+    gDesktop.activeTag = tag;
+    gWmRoot._activeWnd = wnd;
+    m.redraw();
+
+    return wnd;
+  },
 
   get maximized() {
     return (
@@ -35067,9 +35162,16 @@ window.gWmRoot = {
     wnd = Object.assign({}, wnd);
     wnd.key = nextWndKey++;
 
-    gWmRoot.wnds.push(wnd);
+    gDesktop.activeTag =
+      gDesktop.activeTag || gDesktop.tags[0];
 
+    wnd.desktopTag =
+      wnd.desktopTag || gDesktop.activeTag.name;
+
+    gWmRoot.wnds.push(wnd);
     m.redraw();
+
+    return wnd;
   },
 };
 
@@ -35091,10 +35193,7 @@ module.exports = {
     });
 
     gKbd.addBinding('Meta-B', () => {
-      gWmRoot.createWnd({
-        desktopTag: 'web',
-        component: metal,
-      });
+      gWmRoot.createWnd({ component: metal });
     });
 
     for (let evName of ['keydown', 'keyup']) {
@@ -35143,7 +35242,7 @@ module.exports = {
   },
 };
 
-},{"./kbd":4,"./metal":9,"./wnd":17}],17:[function(require,module,exports){
+},{"./kbd":4,"./metal":10,"./wnd":18}],18:[function(require,module,exports){
 module.exports = {
   oninit: function(vn) {
     let wnd = vn.attrs;
@@ -35288,11 +35387,17 @@ module.exports = {
   view: function(vn) {
     let wnd = vn.attrs;
 
+    let onAnotherTag = (
+      !gDesktop.activeTag ||
+      gDesktop.activeTag.name !== wnd.desktopTag
+    );
+
     return m('.wnd', {
       key: wnd.key, class: makeClassString({
         'wnd--tag_': wnd.desktopTag,
         'wnd--comp_': wnd.component.name,
         'wnd--active': wnd.active,
+        'wnd--onAnotherTag': onAnotherTag,
         'wnd--maximized': wnd.maximized,
         'wnd--floating': !wnd.maximized,
       }),

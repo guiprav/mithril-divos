@@ -8,6 +8,33 @@ let nextWndKey = 0;
 window.gWmRoot = {
   wnds: [],
 
+  get activeWnd() {
+    return gWmRoot._activeWnd;
+  },
+
+  set activeWnd(wnd) {
+    let tag = (() => {
+      if (wnd) {
+        return gDesktop.tags.find(
+          x => x.name === wnd.desktopTag
+        );
+      }
+      else {
+        return gDesktop.activeTag;
+      }
+    })();
+
+    if (tag) {
+      tag.lastActiveWnd = wnd;
+    }
+
+    gDesktop.activeTag = tag;
+    gWmRoot._activeWnd = wnd;
+    m.redraw();
+
+    return wnd;
+  },
+
   get maximized() {
     return (
       gWmRoot.activeWnd &&
@@ -19,9 +46,16 @@ window.gWmRoot = {
     wnd = Object.assign({}, wnd);
     wnd.key = nextWndKey++;
 
-    gWmRoot.wnds.push(wnd);
+    gDesktop.activeTag =
+      gDesktop.activeTag || gDesktop.tags[0];
 
+    wnd.desktopTag =
+      wnd.desktopTag || gDesktop.activeTag.name;
+
+    gWmRoot.wnds.push(wnd);
     m.redraw();
+
+    return wnd;
   },
 };
 
@@ -43,10 +77,7 @@ module.exports = {
     });
 
     gKbd.addBinding('Meta-B', () => {
-      gWmRoot.createWnd({
-        desktopTag: 'web',
-        component: metal,
-      });
+      gWmRoot.createWnd({ component: metal });
     });
 
     for (let evName of ['keydown', 'keyup']) {

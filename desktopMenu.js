@@ -1,4 +1,5 @@
 let menuClock = require('./menuClock');
+let menuDesktopTags = require('./menuDesktopTags');
 let menuVolCtrl = require('./menuVolCtrl');
 let menuWndTitle = require('./menuWndTitle');
 
@@ -9,6 +10,7 @@ module.exports = {
     }),
   }, [
     m('.desktopMenu-leftBox', [
+      m(menuDesktopTags),
       m(menuWndTitle),
     ]),
 
