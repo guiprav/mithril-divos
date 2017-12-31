@@ -45,8 +45,26 @@ module.exports = {
       m.redraw();
     };
 
+    wnd.toggleMaximized = () => {
+      wnd.maximized = !wnd.maximized;
+      m.redraw();
+    };
+
+    wnd.close = () => {
+      wnd.active = false;
+
+      let { wnds } = gWmRoot;
+
+      wnds.splice(wnds.indexOf(wnd), 1);
+
+      m.redraw();
+    };
+
     wnd.onFrame = () => {
-      // FIXME: Stop once window is closed.
+      if (!wnd.dom) {
+        return;
+      }
+
       requestAnimationFrame(wnd.onFrame);
 
       let isFocused = (
@@ -110,6 +128,13 @@ module.exports = {
       .on('resizestart', () => wnd.makeActive());
 
     wnd.onFrame();
+  },
+
+  onremove: function(vn) {
+    let wnd = vn.attrs;
+
+    wnd.dom = null;
+    wnd.$dom = $(wnd.dom);
   },
 
   view: function(vn) {

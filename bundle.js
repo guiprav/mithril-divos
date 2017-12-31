@@ -77,9 +77,15 @@ function keyHandler(ev) {
   let isKeyPressEv = ev.type === 'keypress';
   let isKeyUpEv = ev.type === 'keyup';
 
-  if (isKeyDownEv || isKeyPressEv) {
+  if (isKeyDownEv) {
     gKbd.keysDown[key] = true;
+  }
+  else
+  if (isKeyUpEv) {
+    gKbd.keysDown[key] = false;
+  }
 
+  if (isKeyPressEv) {
     for (let [k, v] of Object.entries(gKbd.bindings)) {
       let binding = k.split('-').map(upperCaseFirst);
 
@@ -97,6 +103,9 @@ function keyHandler(ev) {
 
           case 'Meta':
             return ev.metaKey;
+
+          case 'Shift':
+            return ev.shiftKey;
         }
 
         return false;
@@ -105,6 +114,8 @@ function keyHandler(ev) {
       if (!match) {
         continue;
       }
+
+      ev.preventDefault();
 
       for (let handler of v) {
         try {
@@ -117,10 +128,6 @@ function keyHandler(ev) {
 
       break;
     }
-  }
-
-  if (isKeyUpEv) {
-    gKbd.keysDown[key] = false;
   }
 }
 
@@ -35041,7 +35048,10 @@ return hooks;
 },{}],16:[function(require,module,exports){
 require('./kbd');
 
+let metal = require('./metal');
 let wnd = require('./wnd');
+
+let nextWndKey = 0;
 
 window.gWmRoot = {
   wnds: [],
@@ -35049,10 +35059,41 @@ window.gWmRoot = {
   get maximized() {
     return this.active && this.active.maximized;
   },
+
+  createWnd: wnd => {
+    wnd = Object.assign({}, wnd);
+    wnd.key = nextWndKey++;
+
+    gWmRoot.wnds.push(wnd);
+
+    m.redraw();
+  },
 };
 
 module.exports = {
   oninit: function() {
+    gKbd.addBinding('Meta-Shift-C', () => {
+      let { activeWnd } = gWmRoot;
+      activeWnd && activeWnd.close();
+    });
+
+    gKbd.addBinding('Meta-M', () => {
+      let { activeWnd } = gWmRoot;
+
+      if (!activeWnd) {
+        return;
+      }
+
+      activeWnd.toggleMaximized();
+    });
+
+    gKbd.addBinding('Meta-B', () => {
+      gWmRoot.createWnd({
+        desktopTag: 'web',
+        component: metal,
+      });
+    });
+
     for (let evName of ['keydown', 'keyup']) {
       document.addEventListener(evName, ev => {
         if (ev.key !== 'Meta' || !this.dom) {
@@ -35097,7 +35138,7 @@ module.exports = {
   },
 };
 
-},{"./kbd":4,"./wnd":17}],17:[function(require,module,exports){
+},{"./kbd":4,"./metal":9,"./wnd":17}],17:[function(require,module,exports){
 module.exports = {
   oninit: function(vn) {
     let wnd = vn.attrs;
@@ -35145,8 +35186,26 @@ module.exports = {
       m.redraw();
     };
 
+    wnd.toggleMaximized = () => {
+      wnd.maximized = !wnd.maximized;
+      m.redraw();
+    };
+
+    wnd.close = () => {
+      wnd.active = false;
+
+      let { wnds } = gWmRoot;
+
+      wnds.splice(wnds.indexOf(wnd), 1);
+
+      m.redraw();
+    };
+
     wnd.onFrame = () => {
-      // FIXME: Stop once window is closed.
+      if (!wnd.dom) {
+        return;
+      }
+
       requestAnimationFrame(wnd.onFrame);
 
       let isFocused = (
@@ -35210,6 +35269,13 @@ module.exports = {
       .on('resizestart', () => wnd.makeActive());
 
     wnd.onFrame();
+  },
+
+  onremove: function(vn) {
+    let wnd = vn.attrs;
+
+    wnd.dom = null;
+    wnd.$dom = $(wnd.dom);
   },
 
   view: function(vn) {

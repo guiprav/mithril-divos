@@ -1,6 +1,9 @@
 require('./kbd');
 
+let metal = require('./metal');
 let wnd = require('./wnd');
+
+let nextWndKey = 0;
 
 window.gWmRoot = {
   wnds: [],
@@ -8,10 +11,41 @@ window.gWmRoot = {
   get maximized() {
     return this.active && this.active.maximized;
   },
+
+  createWnd: wnd => {
+    wnd = Object.assign({}, wnd);
+    wnd.key = nextWndKey++;
+
+    gWmRoot.wnds.push(wnd);
+
+    m.redraw();
+  },
 };
 
 module.exports = {
   oninit: function() {
+    gKbd.addBinding('Meta-Shift-C', () => {
+      let { activeWnd } = gWmRoot;
+      activeWnd && activeWnd.close();
+    });
+
+    gKbd.addBinding('Meta-M', () => {
+      let { activeWnd } = gWmRoot;
+
+      if (!activeWnd) {
+        return;
+      }
+
+      activeWnd.toggleMaximized();
+    });
+
+    gKbd.addBinding('Meta-B', () => {
+      gWmRoot.createWnd({
+        desktopTag: 'web',
+        component: metal,
+      });
+    });
+
     for (let evName of ['keydown', 'keyup']) {
       document.addEventListener(evName, ev => {
         if (ev.key !== 'Meta' || !this.dom) {

@@ -26,9 +26,15 @@ function keyHandler(ev) {
   let isKeyPressEv = ev.type === 'keypress';
   let isKeyUpEv = ev.type === 'keyup';
 
-  if (isKeyDownEv || isKeyPressEv) {
+  if (isKeyDownEv) {
     gKbd.keysDown[key] = true;
+  }
+  else
+  if (isKeyUpEv) {
+    gKbd.keysDown[key] = false;
+  }
 
+  if (isKeyPressEv) {
     for (let [k, v] of Object.entries(gKbd.bindings)) {
       let binding = k.split('-').map(upperCaseFirst);
 
@@ -46,6 +52,9 @@ function keyHandler(ev) {
 
           case 'Meta':
             return ev.metaKey;
+
+          case 'Shift':
+            return ev.shiftKey;
         }
 
         return false;
@@ -54,6 +63,8 @@ function keyHandler(ev) {
       if (!match) {
         continue;
       }
+
+      ev.preventDefault();
 
       for (let handler of v) {
         try {
@@ -66,9 +77,5 @@ function keyHandler(ev) {
 
       break;
     }
-  }
-
-  if (isKeyUpEv) {
-    gKbd.keysDown[key] = false;
   }
 }
