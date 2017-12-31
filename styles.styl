@@ -27,7 +27,7 @@ body
   overflow: hidden
   margin: 0
   font-family: 'Droid Sans Mono Awesome', monospace
-  font-size: 15px
+  font-size: 12px
   background-color: #333
   background-image: url('wallpaper.jpg')
   background-size: cover
@@ -173,9 +173,9 @@ body
 
 .desktopMenu
   display: flex
-  align-items: center
+  align-items: stretch
   justify-content: space-between
-  line-height: 22px
+  height: 18px
   background-color: var(--desktopMenuBg)
   color: var(--whiteText)
   user-select: none
@@ -192,6 +192,7 @@ body
 .desktopMenu-leftBox
 .desktopMenu-rightBox
   display: flex
+  align-items: stretch
 
 .desktopMenu-rightBox
   & > * + *
@@ -212,6 +213,7 @@ body
   padding: 0
   padding-left: 8px
   padding-right: 5px
+  font-size: inherit
   font-family: inherit
   color: var(--greyText)
   background-color: transparent
@@ -236,10 +238,16 @@ body
     border: 1px solid transparent
     background-color: #c5c8c6
 
+.menuWndTitle
+  display: flex
+  align-items: center
+
 .menuVolCtrl
   --sepColor: var(--desktopMenuBg2)
   --bgColor: var(--desktopMenuBg2)
 
+  display: flex
+  align-items: center
   color: var(--purpleText)
 
 .menuVolCtrl-label
@@ -253,6 +261,9 @@ body
   --sepColor: var(--desktopMenuBg)
   --bgColor: var(--desktopMenuBg)
 
+  display: flex
+  align-items: center
+
 .menuClock-dateLabel
   &:before
     content: '\e846\00a0 '
@@ -260,6 +271,9 @@ body
 .menuClock-time
   --sepColor: var(--whiteText)
   --bgColor: var(--desktopMenuBg)
+
+  display: flex
+  align-items: center
 
 .wmRoot
   position: relative
@@ -318,15 +332,11 @@ body
   .wnd--maximized &
     display: none
 
-.metalNav-urlInput--active
-  cursor: initial
-
-.metalNav-urlInput--inWnd
-.metalNav-urlInput--inMenuWndTitle
+.metalNav-urlInput
   width: 100%
-  line-height: 22px
   border: 0
   padding: 0
+  font-size: inherit
   font-family: inherit
   background-color: transparent
   color: white
@@ -334,8 +344,10 @@ body
 
   &:focus
     outline: none
+    cursor: initial
 
 .metalNav-urlInput--inWnd
+  height: 21px
   padding: 0 7px
 
 .metalFrame

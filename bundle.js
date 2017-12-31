@@ -431,7 +431,6 @@ module.exports = {
         value: this.metal.url,
 
         class: makeClassString({
-          'metalNav-urlInput--active': this.metal.wnd.active,
           'metalNav-urlInput--inWnd': !inMenuWndTitle,
           'metalNav-urlInput--inMenuWndTitle': inMenuWndTitle,
         }),
