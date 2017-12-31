@@ -6,9 +6,13 @@ module.exports = {
   oncreate: function(vn) {
     let input = vn.dom.querySelector('input');
 
-    // TODO: Write a helper to do this.
-    input.addEventListener('change', () => {
-      this.value = input.value;
+    input.addEventListener('keydown', ev => {
+      if (ev.key !== 'Enter') {
+        return;
+      }
+
+      this.metal.url = input.value;
+      m.redraw();
     });
   },
 
