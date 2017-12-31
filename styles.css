@@ -224,6 +224,9 @@ body {
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
   transition: opacity ease 0.2s;
 }
+.wmRoot--dragMode .wnd > * {
+  pointer-events: none;
+}
 .wnd.ui-draggable-dragging {
   opacity: 0.8;
 }
@@ -240,9 +243,6 @@ body {
 }
 .wmRoot--dragMode .wnd--floating {
   cursor: pointer;
-}
-.wmRoot--dragMode .wnd--floating > * {
-  pointer-events: none;
 }
 .wnd--comp_metal.wnd--floating {
   overflow: hidden;
@@ -283,7 +283,6 @@ body {
   height: 100%;
   border: 0;
 }
-.ui-draggable-dragging .metalFrame-iframe,
 .ui-resizable-resizing .metalFrame-iframe {
   pointer-events: none;
 }

@@ -41,7 +41,9 @@ module.exports = {
     });
 
     wnd.makeActive = () => {
+      document.activeElement.blur();
       wnd.active = true;
+
       m.redraw();
     };
 

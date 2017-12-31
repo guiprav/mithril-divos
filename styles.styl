@@ -231,6 +231,10 @@ body
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5)
   transition: opacity ease 0.2s
 
+  .wmRoot--dragMode &
+    & > *
+      pointer-events: none
+
   &.ui-draggable-dragging
     opacity: 0.8
 
@@ -248,9 +252,6 @@ body
 .wnd--floating
   .wmRoot--dragMode &
     cursor: pointer
-
-    & > *
-      pointer-events: none
 
 .wnd--comp_metal
   &.wnd--floating
@@ -292,7 +293,6 @@ body
   height: 100%
   border: 0
 
-.ui-draggable-dragging
 .ui-resizable-resizing
   .metalFrame-iframe
     pointer-events: none

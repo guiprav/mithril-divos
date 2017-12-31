@@ -35057,7 +35057,10 @@ window.gWmRoot = {
   wnds: [],
 
   get maximized() {
-    return this.active && this.active.maximized;
+    return (
+      gWmRoot.activeWnd &&
+      gWmRoot.activeWnd.maximized
+    );
   },
 
   createWnd: wnd => {
@@ -35096,7 +35099,7 @@ module.exports = {
 
     for (let evName of ['keydown', 'keyup']) {
       document.addEventListener(evName, ev => {
-        if (ev.key !== 'Meta' || !this.dom) {
+        if (ev.key !== 'Meta' || !gWmRoot.dom) {
           return;
         }
 
@@ -35105,7 +35108,9 @@ module.exports = {
         let addOrRemoveClass = dragMode ?
           'addClass' : 'removeClass';
 
-        this.$dom[addOrRemoveClass]('wmRoot--dragMode');
+        gWmRoot.$dom[addOrRemoveClass](
+          'wmRoot--dragMode'
+        );
 
         let enableOrDisableDraggable = dragMode ?
           'enable' : 'disable';
@@ -35127,8 +35132,8 @@ module.exports = {
   },
 
   oncreate: function(vn) {
-    this.dom = vn.dom;
-    this.$dom = $(this.dom);
+    gWmRoot.dom = vn.dom;
+    gWmRoot.$dom = $(gWmRoot.dom);
   },
 
   view: function() {
@@ -35182,7 +35187,9 @@ module.exports = {
     });
 
     wnd.makeActive = () => {
+      document.activeElement.blur();
       wnd.active = true;
+
       m.redraw();
     };
 
