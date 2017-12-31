@@ -224,6 +224,7 @@ body
 .wnd
   display: flex
   flex-direction: column
+  height: 100%
   border-top-left-radius: 6px
   border-top-right-radius: 6px
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5)
@@ -245,8 +246,53 @@ body
   height: auto !important
 
 .wnd--floating
-  .meta-key &
+  .wmRoot--dragMode &
     cursor: pointer
 
     & > *
       pointer-events: none
+
+.wnd--comp_metal
+  &.wnd--floating
+    overflow: hidden
+    border-radius: 4px
+
+.metal
+  display: flex
+  flex-direction: column
+  height: 100%
+
+.metalNav-urlInput
+  width: 100%
+  height: 22px
+  border: 0
+  padding: 0 7px
+  padding-top: 2px
+  background-color: var(--desktopMenuBg)
+  color: white
+  cursor: default
+
+  &:focus
+    outline: none
+
+.metalNav-urlInput--active
+  cursor: initial
+
+.metalFrame
+  display: flex
+  flex-direction: column
+  flex-grow: 1
+  border: 1px solid #757575
+  border-top: 0
+  background-color: white
+
+.metalFrame-iframe
+  flex-grow: 1
+  width: 100%
+  height: 100%
+  border: 0
+
+.ui-draggable-dragging
+.ui-resizable-resizing
+  .metalFrame-iframe
+    pointer-events: none

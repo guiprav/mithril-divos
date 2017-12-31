@@ -1,3 +1,7 @@
+window.$ = window.jQuery = require('jquery');
+require('jquery-ui-dist/jquery-ui');
+
+require('./kbd');
 require('./metal');
 require('./wmRoot');
 

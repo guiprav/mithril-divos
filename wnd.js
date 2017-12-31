@@ -1,19 +1,36 @@
 module.exports = {
+  oninit: function(vn) {
+    let wnd = vn.attrs;
+
+    Object.defineProperty(wnd, 'active', {
+      get: function() {
+        return gWmRoot.activeWnd === wnd;
+      },
+    });
+  },
+
   oncreate: function(vn) {
-    vn.attrs.dom = vn.dom;
+    let wnd = vn.attrs;
+
+    wnd.dom = vn.dom;
+    wnd.$dom = $(wnd.dom);
+
+    wnd.$dom
+      .resizable({ handles: 'all' })
+      .draggable();
   },
 
   view: function(vn) {
-    let { attrs } = vn;
+    let wnd = vn.attrs;
 
     return m('.wnd', {
-      key: attrs.key, class: makeClassString({
-        'wnd--tag_': attrs.desktopTag,
-        'wnd--comp_': attrs.component.name,
-        'wnd--active': attrs.active,
-        'wnd--maximized': attrs.maximized,
-        'wnd--floating': !attrs.maximized,
+      key: wnd.key, class: makeClassString({
+        'wnd--tag_': wnd.desktopTag,
+        'wnd--comp_': wnd.component.name,
+        'wnd--active': wnd.active,
+        'wnd--maximized': wnd.maximized,
+        'wnd--floating': !wnd.maximized,
       }),
-    }, m(attrs.component));
+    }, m(wnd.component, { wnd }));
   },
 };
