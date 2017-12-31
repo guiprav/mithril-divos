@@ -10,7 +10,6 @@ window.gWmRoot = {
 
 module.exports = {
   view: function() {
-    console.log(gWmRoot.wnds);
     return m('.wmRoot', gWmRoot.wnds.map(
       x => m(wnd, x)
     ));

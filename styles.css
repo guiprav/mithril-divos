@@ -1,0 +1,246 @@
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+@font-face {
+  font-family: 'Droid Sans Mono Awesome';
+  font-style: normal;
+  font-weight: 400;
+  src: url("droid-sans-mono-awesome.ttf");
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  --desktopMenuBg: #1d1f21;
+  --desktopMenuBg2: #282a2e;
+  --greenText: #b5bd68;
+  --greyText: #373b41;
+  --purpleText: #b294bb;
+  --redText: #c66;
+  --whiteText: #c5c8c6;
+  --yellowText: #f0c674;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  font-family: 'Droid Sans Mono Awesome', monospace;
+  font-size: 15px;
+  background-color: #333;
+  background-image: url("wallpaper.jpg");
+  background-size: cover;
+}
+.leftSep {
+  position: relative;
+  margin-left: 1.4em;
+  padding-left: 0.25em;
+  padding-right: 0.45em;
+  background-color: var(--bgColor);
+}
+.leftSep:after {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  border-width: 0.74em;
+  border-right-color: var(--bgColor);
+}
+.leftSep:before {
+  content: '';
+  position: absolute;
+  right: calc(100% + 1px);
+  top: 0;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  border-width: 0.74em;
+  border-right-color: var(--sepColor);
+}
+.rightSep {
+  position: relative;
+  margin-right: 1.4em;
+  padding-right: 0.25em;
+  padding-left: 0.45em;
+  background-color: var(--bgColor);
+}
+.rightSep:after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  border-width: 0.74em;
+  border-left-color: var(--bgColor);
+}
+.rightSep:before {
+  content: '';
+  position: absolute;
+  left: calc(100% + 1px);
+  top: 0;
+  width: 0;
+  height: 0;
+  border: solid transparent;
+  border-width: 0.74em;
+  border-left-color: var(--sepColor);
+}
+.joinLeftSep {
+  padding-left: 2em;
+  margin-left: -2em;
+}
+.joinRightSep {
+  padding-right: 2em;
+  margin-right: -2em;
+}
+.ui-resizable {
+  position: relative;
+}
+.ui-resizable-handle {
+  position: absolute;
+  font-size: 0.1px;
+  display: block;
+}
+.ui-resizable-disabled .ui-resizable-handle,
+.ui-resizable-autohide .ui-resizable-handle {
+  display: none;
+}
+.ui-resizable-n {
+  cursor: n-resize;
+  height: 7px;
+  width: 100%;
+  top: -5px;
+  left: 0;
+}
+.ui-resizable-s {
+  cursor: s-resize;
+  height: 7px;
+  width: 100%;
+  bottom: -5px;
+  left: 0;
+}
+.ui-resizable-e {
+  cursor: e-resize;
+  width: 7px;
+  right: -5px;
+  top: 0;
+  height: 100%;
+}
+.ui-resizable-w {
+  cursor: w-resize;
+  width: 7px;
+  left: -5px;
+  top: 0;
+  height: 100%;
+}
+.ui-resizable-se {
+  cursor: se-resize;
+  width: 12px;
+  height: 12px;
+  right: 1px;
+  bottom: 1px;
+}
+.ui-resizable-sw {
+  cursor: sw-resize;
+  width: 9px;
+  height: 9px;
+  left: -5px;
+  bottom: -5px;
+}
+.ui-resizable-nw {
+  cursor: nw-resize;
+  width: 9px;
+  height: 9px;
+  left: -5px;
+  top: -5px;
+}
+.ui-resizable-ne {
+  cursor: ne-resize;
+  width: 9px;
+  height: 9px;
+  right: -5px;
+  top: -5px;
+}
+.desktopMenu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 22px;
+  background-color: var(--desktopMenuBg);
+  color: var(--whiteText);
+  user-select: none;
+  cursor: default;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+.desktopMenu--maximized {
+  box-shadow: none;
+}
+.desktopMenu-leftBox,
+.desktopMenu-rightBox {
+  display: flex;
+}
+.desktopMenu-rightBox > * + * {
+  margin-left: 3px;
+}
+.menuVolCtrl {
+  --sepColor: var(--desktopMenuBg2);
+  --bgColor: var(--desktopMenuBg2);
+  color: var(--purpleText);
+}
+.menuVolCtrl-label:before {
+  content: '\e13d\00a0 ';
+}
+.menuClock {
+  display: flex;
+}
+.menuClock-date {
+  --sepColor: var(--desktopMenuBg);
+  --bgColor: var(--desktopMenuBg);
+}
+.menuClock-dateLabel:before {
+  content: '\e846\00a0 ';
+}
+.menuClock-time {
+  --sepColor: var(--whiteText);
+  --bgColor: var(--desktopMenuBg);
+}
+.wmRoot {
+  position: fixed;
+  left: 0;
+  top: 22px;
+  width: 100vw;
+  height: calc(100vh - 22px);
+}
+.wnd {
+  display: flex;
+  flex-direction: column;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  transition: opacity ease 0.2s;
+}
+.wnd.ui-draggable-dragging {
+  opacity: 0.8;
+}
+.wnd--active {
+  z-index: 100;
+}
+.wnd--maximized {
+  position: absolute;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+.meta-key .wnd--floating {
+  cursor: pointer;
+}
+.meta-key .wnd--floating > * {
+  pointer-events: none;
+}
+

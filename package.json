@@ -2,11 +2,12 @@
   "name": "div-mithril",
   "version": "1.0.0",
   "scripts": {
-    "build": "browserify index.js -o bundle.js"
+    "build": "./build.sh"
   },
   "dependencies": {
     "browserify": "^14.5.0",
     "mithril": "^1.1.6",
-    "moment": "^2.20.1"
+    "moment": "^2.20.1",
+    "stylus": "^0.54.5"
   }
 }

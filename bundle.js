@@ -9,8 +9,9 @@ module.exports = {
   ]),
 };
 
-},{"./desktopMenu":2,"./wmRoot":10}],2:[function(require,module,exports){
+},{"./desktopMenu":2,"./wmRoot":11}],2:[function(require,module,exports){
 let menuClock = require('./menuClock');
+let menuVolCtrl = require('./menuVolCtrl');
 let menuWndTitle = require('./menuWndTitle');
 
 module.exports = {
@@ -24,12 +25,13 @@ module.exports = {
     ]),
 
     m('.desktopMenu-rightBox', [
+      m(menuVolCtrl),
       m(menuClock),
     ]),
   ]),
 };
 
-},{"./menuClock":5,"./menuWndTitle":6}],3:[function(require,module,exports){
+},{"./menuClock":5,"./menuVolCtrl":6,"./menuWndTitle":7}],3:[function(require,module,exports){
 require('./metal');
 require('./wmRoot');
 
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   m.mount(document.body, desktop);
 });
 
-},{"./desktop":1,"./makeClassString":4,"./metal":7,"./wmRoot":10,"mithril":8}],4:[function(require,module,exports){
+},{"./desktop":1,"./makeClassString":4,"./metal":8,"./wmRoot":11,"mithril":9}],4:[function(require,module,exports){
 let kvRe = /(--|_)$/;
 
 module.exports = classNames => Object.entries(classNames)
@@ -66,10 +68,10 @@ module.exports = {
     );
 
     let update = () => {
-      getElem('date').textContent =
+      getElem('dateLabel').textContent =
         moment().format('ddd DD MMM');
 
-      getElem('time').textContent =
+      getElem('timeLabel').textContent =
         moment().format('hh:mm');
     };
 
@@ -83,13 +85,33 @@ module.exports = {
 
   view: function() {
     return m('.menuClock', [
-      m('.menuClock-date.leftSep.joinRightSep'),
-      m('.menuClock-time.leftSep'),
+      m('.menuClock-date.leftSep.joinRightSep', [
+        m('.menuClock-dateLabel'),
+      ]),
+
+      m('.menuClock-time.leftSep', [
+        m('.menuClock-timeLabel'),
+      ]),
     ]);
   },
 };
 
-},{"moment":9}],6:[function(require,module,exports){
+},{"moment":10}],6:[function(require,module,exports){
+module.exports = {
+  oninit: function() {
+    this.volume = 1;
+  },
+
+  view: function() {
+    return m('.menuVolCtrl.leftSep.joinRightSep', [
+      m('.menuVolCtrl-label', [
+        Math.round(this.volume * 100), '%',
+      ]),
+    ]);
+  },
+};
+
+},{}],7:[function(require,module,exports){
 module.exports = {
   view: () => {
     let active = gWmRoot.active || {};
@@ -104,7 +126,7 @@ module.exports = {
   },
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 window.metal = module.exports = {
   name: 'metal',
 
@@ -113,7 +135,7 @@ window.metal = module.exports = {
   },
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (global){
 ;(function() {
 "use strict"
@@ -1373,7 +1395,7 @@ if (typeof module !== "undefined") module["exports"] = m
 else window.m = m
 }());
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 //! moment.js
 //! version : 2.20.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -5910,7 +5932,7 @@ return hooks;
 
 })));
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 let wnd = require('./wnd');
 
 window.gWmRoot = {
@@ -5923,14 +5945,13 @@ window.gWmRoot = {
 
 module.exports = {
   view: function() {
-    console.log(gWmRoot.wnds);
     return m('.wmRoot', gWmRoot.wnds.map(
       x => m(wnd, x)
     ));
   },
 };
 
-},{"./wnd":11}],11:[function(require,module,exports){
+},{"./wnd":12}],12:[function(require,module,exports){
 module.exports = {
   oncreate: function(vn) {
     vn.attrs.dom = vn.dom;
@@ -5938,7 +5959,6 @@ module.exports = {
 
   view: function(vn) {
     let { attrs } = vn;
-    console.log(attrs);
 
     return m('.wnd', {
       key: attrs.key, class: makeClassString({

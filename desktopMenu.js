@@ -1,4 +1,5 @@
 let menuClock = require('./menuClock');
+let menuVolCtrl = require('./menuVolCtrl');
 let menuWndTitle = require('./menuWndTitle');
 
 module.exports = {
@@ -12,6 +13,7 @@ module.exports = {
     ]),
 
     m('.desktopMenu-rightBox', [
+      m(menuVolCtrl),
       m(menuClock),
     ]),
   ]),

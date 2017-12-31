@@ -7,10 +7,10 @@ module.exports = {
     );
 
     let update = () => {
-      getElem('date').textContent =
+      getElem('dateLabel').textContent =
         moment().format('ddd DD MMM');
 
-      getElem('time').textContent =
+      getElem('timeLabel').textContent =
         moment().format('hh:mm');
     };
 
@@ -24,8 +24,13 @@ module.exports = {
 
   view: function() {
     return m('.menuClock', [
-      m('.menuClock-date.leftSep.joinRightSep'),
-      m('.menuClock-time.leftSep'),
+      m('.menuClock-date.leftSep.joinRightSep', [
+        m('.menuClock-dateLabel'),
+      ]),
+
+      m('.menuClock-time.leftSep', [
+        m('.menuClock-timeLabel'),
+      ]),
     ]);
   },
 };
