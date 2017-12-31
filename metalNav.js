@@ -32,7 +32,13 @@ module.exports = {
             break;
 
           case 'Enter':
-            this.metal.url = $input.val();
+            let url = $input.val();
+
+            if (!/^[^:]+:\/\//.test(url)) {
+              url = `https://${url}`;
+            }
+
+            this.metal.url = url;
 
             $input.blur();
             m.redraw();

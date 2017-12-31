@@ -268,8 +268,6 @@ module.exports = {
 };
 
 },{}],9:[function(require,module,exports){
-let derp = true;
-
 module.exports = {
   view: () => {
     let activeWnd = gWmRoot.activeWnd || {
@@ -391,7 +389,13 @@ module.exports = {
             break;
 
           case 'Enter':
-            this.metal.url = $input.val();
+            let url = $input.val();
+
+            if (!/^[^:]+:\/\//.test(url)) {
+              url = `https://${url}`;
+            }
+
+            this.metal.url = url;
 
             $input.blur();
             m.redraw();
