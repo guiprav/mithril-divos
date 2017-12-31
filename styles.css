@@ -215,6 +215,7 @@ body {
   height: calc(100vh - 22px);
 }
 .wnd {
+  position: absolute;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -230,7 +231,6 @@ body {
   z-index: 100;
 }
 .wnd--maximized {
-  position: absolute;
   left: 0 !important;
   right: 0 !important;
   top: 0 !important;

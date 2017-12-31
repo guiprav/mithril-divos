@@ -29,6 +29,10 @@ module.exports = {
           'enable' : 'disable';
 
         for (let wnd of gWmRoot.wnds) {
+          if (wnd.maximized) {
+            continue;
+          }
+
           try {
             wnd.$dom.draggable(enableOrDisableDraggable);
           }
