@@ -51,7 +51,12 @@ module.exports = {
   view: function(vn) {
     let { inMenuWndTitle } = vn.attrs;
 
-    return m('.metalNav', [
+    return m('.metalNav', {
+      class: makeClassString({
+        'metalNav--inWnd': !inMenuWndTitle,
+        'metalNav--inMenuWndTitle': inMenuWndTitle,
+      }),
+    }, [
       m('input.metalNav-urlInput', {
         autocomplete: 'off',
         autocorrect: 'off',
