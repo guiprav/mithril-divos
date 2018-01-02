@@ -1,5 +1,6 @@
 let menuClock = require('./menuClock');
 let menuDesktopTags = require('./menuDesktopTags');
+let menuLauncher = require('./menuLauncher');
 let menuVolCtrl = require('./menuVolCtrl');
 let menuWndTitle = require('./menuWndTitle');
 
@@ -9,9 +10,26 @@ module.exports = {
       this.hidden = !this.hidden;
       m.redraw();
     });
+
+    gKbd.addBinding('Meta-R', () => {
+      if (this.wndTitleOverride) {
+        return;
+      }
+
+      this.wndTitleOverride = () => m(menuLauncher, {
+        onClose: () => {
+          this.wndTitleOverride = null;
+        },
+      });
+
+      m.redraw();
+    });
   },
 
   view: function() {
+    let vnWndTitle = this.wndTitleOverride ?
+      this.wndTitleOverride() : m(menuWndTitle);
+
     return m('.desktopMenu', {
       class: makeClassString({
         'desktopMenu--hidden': this.hidden,
@@ -20,7 +38,7 @@ module.exports = {
     }, [
       m('.desktopMenu-leftBox', [
         m(menuDesktopTags),
-        m(menuWndTitle),
+        vnWndTitle,
       ]),
 
       m('.desktopMenu-rightBox', [

@@ -21,9 +21,10 @@ module.exports = {
   ]),
 };
 
-},{"./desktopMenu":2,"./wmRoot":17}],2:[function(require,module,exports){
+},{"./desktopMenu":2,"./wmRoot":19}],2:[function(require,module,exports){
 let menuClock = require('./menuClock');
 let menuDesktopTags = require('./menuDesktopTags');
+let menuLauncher = require('./menuLauncher');
 let menuVolCtrl = require('./menuVolCtrl');
 let menuWndTitle = require('./menuWndTitle');
 
@@ -33,9 +34,26 @@ module.exports = {
       this.hidden = !this.hidden;
       m.redraw();
     });
+
+    gKbd.addBinding('Meta-R', () => {
+      if (this.wndTitleOverride) {
+        return;
+      }
+
+      this.wndTitleOverride = () => m(menuLauncher, {
+        onClose: () => {
+          this.wndTitleOverride = null;
+        },
+      });
+
+      m.redraw();
+    });
   },
 
   view: function() {
+    let vnWndTitle = this.wndTitleOverride ?
+      this.wndTitleOverride() : m(menuWndTitle);
+
     return m('.desktopMenu', {
       class: makeClassString({
         'desktopMenu--hidden': this.hidden,
@@ -44,7 +62,7 @@ module.exports = {
     }, [
       m('.desktopMenu-leftBox', [
         m(menuDesktopTags),
-        m(menuWndTitle),
+        vnWndTitle,
       ]),
 
       m('.desktopMenu-rightBox', [
@@ -55,7 +73,7 @@ module.exports = {
   },
 };
 
-},{"./menuClock":6,"./menuDesktopTags":7,"./menuVolCtrl":8,"./menuWndTitle":9}],3:[function(require,module,exports){
+},{"./menuClock":7,"./menuDesktopTags":8,"./menuLauncher":9,"./menuVolCtrl":10,"./menuWndTitle":11}],3:[function(require,module,exports){
 window.$ = window.jQuery = require('jquery');
 require('jquery-ui-dist/jquery-ui');
 
@@ -72,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   m.mount(document.body, desktop);
 });
 
-},{"./desktop":1,"./kbd":4,"./makeClassString":5,"./metal":10,"./wmRoot":17,"jquery":14,"jquery-ui-dist/jquery-ui":13,"mithril":15}],4:[function(require,module,exports){
+},{"./desktop":1,"./kbd":4,"./makeClassString":5,"./metal":12,"./wmRoot":19,"jquery":16,"jquery-ui-dist/jquery-ui":15,"mithril":17}],4:[function(require,module,exports){
 window.gKbd = {
   bindings: {},
   keysDown: {},
@@ -170,6 +188,190 @@ module.exports = classNames => Object.entries(classNames)
   .join(' ');
 
 },{}],6:[function(require,module,exports){
+module.exports = {
+  oninit: function({ attrs }) {
+    this.attrs = attrs;
+
+    this.cols = attrs.cols || [];
+    this.rows = [];
+
+    let getCb = k => attrs[k] || function() {};
+
+    this.onBlur = getCb('onBlur');
+    this.onClose = getCb('onClose');
+    this.onSelect = getCb('onSelect');
+
+    this.onSearch = val => {
+      this.rows = getCb('onSearch')(val) || [];
+      m.redraw();
+
+      requestAnimationFrame(() => {
+        this.$table =
+          this.$dom.find('.menuAutocomplete-table');
+
+        this.$cursor = this.$table
+          .children('.menuAutocomplete-cursor');
+
+        if (!this.$cursor.length) {
+          this.$cursor = this.$table
+            .children('tr').first()
+            .addClass('menuAutocomplete-cursor');
+        }
+      });
+    };
+
+    this.onKeyDown = ev => {
+      if (ev.key === 'Escape') {
+        this.onClose();
+        return;
+      }
+
+      if (ev.key === 'Enter') {
+        if (!this.$cursor.length) {
+          return;
+        }
+
+        this.onSelect(this.rows[
+          this.$cursor.index('tr')
+        ]);
+
+        return;
+      }
+
+      if (ev.key === 'ArrowUp') {
+        ev.preventDefault();
+
+        this.$cursor = this.$cursor
+          .removeClass('menuAutocomplete-cursor')
+          .prev('tr')
+          .addClass('menuAutocomplete-cursor');
+
+        if (!this.$cursor.length) {
+          this.$cursor = this.$table
+            .children('tr').last()
+            .addClass('menuAutocomplete-cursor');
+        }
+
+        return;
+      }
+
+      if (ev.key === 'ArrowDown') {
+        ev.preventDefault();
+
+        this.$cursor = this.$cursor
+          .removeClass('menuAutocomplete-cursor')
+          .next('tr')
+          .addClass('menuAutocomplete-cursor');
+
+        if (!this.$cursor.length) {
+          this.$cursor = this.$table
+            .children('tr').first()
+            .addClass('menuAutocomplete-cursor');
+        }
+
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        this.onSearch(ev.target.value);
+      });
+    };
+  },
+
+  oncreate: function({ dom }) {
+    this.dom = dom;
+    this.$dom = $(dom);
+
+    this.$input =
+      this.$dom.find('.menuAutocomplete-input');
+
+    this.$input.focus();
+    this.onSearch('');
+  },
+
+  view: function({ attrs }) { 
+    this.looks = attrs.looks || 'default';
+
+    let dropdownBox;
+
+    if (this.rows.length) {
+      let th = !!this.cols.length && m('th', [
+        ...this.cols.map(col => {
+          if (typeof col !== 'object') {
+            col = m('.menuAutocomplete-colLabel', {
+              class: makeClassString({
+                'menuAutocomplete-colLabel--': this.looks,
+              }),
+            }, [
+              col,
+            ]);
+          }
+
+          return m('td', col);
+        }),
+      ]);
+
+      let rows = this.rows.map(row => {
+        let { cols, key } = row;
+
+        if (!Array.isArray(cols)) {
+          cols = [cols];
+        }
+
+        return m('tr', { key }, cols.map(col => {
+          if (typeof col !== 'object') {
+            col = m('.menuAutocomplete-colData', {
+              class: makeClassString({
+                'menuAutocomplete-colData--': this.looks,
+              }),
+            }, [
+              col,
+            ]);
+          }
+
+          return m('td', col);
+        }));
+      });
+
+      dropdownBox = m('.menuAutocomplete-dropdownBox', {
+        class: makeClassString({
+          'menuAutocomplete-dropdownBox--': this.looks,
+        }),
+      }, [
+        m('table.menuAutocomplete-table', {
+          class: makeClassString({
+            'menuAutocomplete-table--': this.looks,
+          }),
+        }, [
+          th, ...rows,
+        ]),
+      ]);
+    }
+
+    return m('.menuAutocomplete', {
+      class: makeClassString({
+        'menuAutocomplete--': this.looks,
+      }),
+    }, [
+      m('input.menuAutocomplete-input', {
+        // TODO: Add other stuff.
+        autocomplete: 'off',
+        autocorrect: 'off',
+
+        class: makeClassString({
+          'menuAutocomplete-input--': this.looks,
+        }),
+
+        //onblur: this.onBlur,
+        onkeydown: this.onKeyDown,
+      }),
+
+      dropdownBox || '',
+    ]);
+  },
+};
+
+},{}],7:[function(require,module,exports){
 let moment = require('moment');
 
 module.exports = {
@@ -207,7 +409,7 @@ module.exports = {
   },
 };
 
-},{"moment":16}],7:[function(require,module,exports){
+},{"moment":18}],8:[function(require,module,exports){
 module.exports = {
   oninit: function() {
     this.switchCmd = num => {
@@ -262,7 +464,50 @@ module.exports = {
   },
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+let menuAutocomplete = require('./menuAutocomplete');
+let metal = require('./metal');
+
+module.exports = {
+  oninit: function(vn) {
+    let attrs = this.attrs = vn.attrs;
+    let getCb = k => attrs[k] || function() {};
+
+    this.rows = [
+      { key: 'metal', cols: ['metal', 'Metal Web Browser'] },
+      { key: 'none', cols: ['none', 'Just a placeholder row'] },
+    ];
+
+    this.onClose = getCb('onClose');
+
+    this.onSearch = terms => this.rows.filter(
+      row => row.key.startsWith(terms.split(' ')[0])
+    );
+
+    this.onSelect = row => {
+      if (row.key === 'metal') {
+        gWmRoot.createWnd({ component: metal });
+      }
+
+      this.onClose();
+    };
+  },
+
+  view: function() {
+    return m('.menuLauncher', [
+      m(menuAutocomplete, {
+        looks: 'menuLauncher',
+
+        onBlur: this.onClose,
+        onClose: this.onClose,
+        onSearch: this.onSearch,
+        onSelect: this.onSelect,
+      }),
+    ]);
+  },
+};
+
+},{"./menuAutocomplete":6,"./metal":12}],10:[function(require,module,exports){
 module.exports = {
   oninit: function() {
     this.volume = 1;
@@ -277,7 +522,7 @@ module.exports = {
   },
 };
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = {
   view: () => {
     let activeWnd = gWmRoot.activeWnd || {
@@ -312,7 +557,7 @@ module.exports = {
   },
 };
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 let metalNav = require('./metalNav');
 let metalFrame = require('./metalFrame');
 
@@ -349,7 +594,7 @@ window.metal = module.exports = {
   },
 };
 
-},{"./metalFrame":11,"./metalNav":12}],11:[function(require,module,exports){
+},{"./metalFrame":13,"./metalNav":14}],13:[function(require,module,exports){
 module.exports = {
   oninit: function(vn) {
     this.metal = vn.attrs.metal;
@@ -368,7 +613,7 @@ module.exports = {
   },
 };
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = {
   oninit: function(vn) {
     this.metal = vn.attrs.metal;
@@ -439,7 +684,7 @@ module.exports = {
   },
 };
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*! jQuery UI - v1.12.1 - 2016-09-14
 * http://jqueryui.com
 * Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-1-7.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
@@ -19146,7 +19391,7 @@ var widgetsTooltip = $.ui.tooltip;
 
 
 }));
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -29401,7 +29646,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function (global){
 ;(function() {
 "use strict"
@@ -30661,7 +30906,7 @@ if (typeof module !== "undefined") module["exports"] = m
 else window.m = m
 }());
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 //! moment.js
 //! version : 2.20.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -35198,7 +35443,7 @@ return hooks;
 
 })));
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 require('./kbd');
 
 let metal = require('./metal');
@@ -35327,7 +35572,7 @@ module.exports = {
   },
 };
 
-},{"./kbd":4,"./metal":10,"./wnd":18}],18:[function(require,module,exports){
+},{"./kbd":4,"./metal":12,"./wnd":20}],20:[function(require,module,exports){
 module.exports = {
   oninit: function(vn) {
     let wnd = vn.attrs;

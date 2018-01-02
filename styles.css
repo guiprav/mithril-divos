@@ -178,7 +178,7 @@ body {
   user-select: none;
   cursor: default;
   box-shadow: 0 1px 10px rgba(0,0,0,0.5);
-  z-index: 100;
+  z-index: 200;
 }
 .desktopMenu--hidden {
   display: none;
@@ -190,6 +190,9 @@ body {
 .desktopMenu-rightBox {
   display: flex;
   align-items: stretch;
+}
+.desktopMenu-leftBox {
+  flex-grow: 1;
 }
 .desktopMenu-rightBox > * + * {
   margin-left: 3px;
@@ -235,8 +238,59 @@ body {
   background-color: #c5c8c6;
 }
 .menuWndTitle {
+  flex-grow: 1;
   display: flex;
   align-items: center;
+}
+.menuLauncher {
+  flex-grow: 1;
+  display: flex;
+  align-items: stretch;
+}
+.menuAutocomplete--menuLauncher {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  align-items: stretch;
+}
+.menuAutocomplete-input--menuLauncher {
+  width: 100%;
+  border: 0;
+  font-family: inherit;
+  font-size: inherit;
+  background-color: transparent;
+  color: inherit;
+}
+.menuAutocomplete-input--menuLauncher:focus {
+  outline: none;
+}
+.menuAutocomplete-dropdownBox--menuLauncher {
+  position: absolute;
+  left: -15px;
+  top: 100%;
+  padding-bottom: 6px;
+  background-color: var(--desktopMenuBg);
+}
+.menuAutocomplete-table--menuLauncher {
+  border: 0;
+  border-spacing: 0;
+}
+.menuAutocomplete-table--menuLauncher > th,
+.menuAutocomplete-table--menuLauncher > tr {
+  display: block;
+  padding: 0 15px;
+}
+.menuAutocomplete-table--menuLauncher > th > td,
+.menuAutocomplete-table--menuLauncher > tr > td {
+  padding: 0;
+}
+.menuAutocomplete-table--menuLauncher > th > td + *,
+.menuAutocomplete-table--menuLauncher > tr > td + * {
+  padding-left: 10px;
+}
+.menuAutocomplete-cursor {
+  background-color: var(--desktopMenuBg2);
+  color: var(--yellowText);
 }
 .menuVolCtrl {
   --sepColor: var(--desktopMenuBg2);
@@ -315,6 +369,7 @@ body {
 }
 .metalNav {
   display: flex;
+  flex-grow: 1;
   background-color: var(--desktopMenuBg);
 }
 .wnd--maximized .metalNav {
