@@ -1,15 +1,13 @@
 let menuAutocomplete = require('./menuAutocomplete');
-let metal = require('./metal');
 
 module.exports = {
   oninit: function(vn) {
     let attrs = this.attrs = vn.attrs;
     let getCb = k => attrs[k] || function() {};
 
-    this.rows = [
-      { key: 'metal', cols: ['metal', 'Metal Web Browser'] },
-      { key: 'none', cols: ['none', 'Just a placeholder row'] },
-    ];
+    this.rows = gCmds.list.map(name => ({
+      key: name, cols: [name],
+    }));
 
     this.onClose = getCb('onClose');
 
@@ -18,10 +16,7 @@ module.exports = {
     );
 
     this.onSelect = row => {
-      if (row.key === 'metal') {
-        gWmRoot.createWnd({ component: metal });
-      }
-
+      gCmds.run(row.key);
       this.onClose();
     };
   },

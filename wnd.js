@@ -1,3 +1,5 @@
+let EventEmitter = require('events');
+
 module.exports = {
   oninit: function(vn) {
     let wnd = vn.attrs;
@@ -15,6 +17,12 @@ module.exports = {
       if (wnd[k] === undefined) {
         wnd[k] = defaults[k];
       }
+    }
+
+    wnd.ee = new EventEmitter();
+
+    for (let k of ['on', 'once', 'removeListener']) {
+      wnd[k] = (...args) => wnd.ee[k](...args);
     }
 
     if (wnd.active) {
@@ -53,11 +61,17 @@ module.exports = {
     };
 
     wnd.close = () => {
+      if (wnd.closed) {
+        return;
+      }
+
+      wnd.closed = true;
       wnd.active = false;
 
       let { wnds } = gWmRoot;
 
       wnds.splice(wnds.indexOf(wnd), 1);
+      wnd.ee.emit('close');
 
       m.redraw();
     };

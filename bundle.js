@@ -1,4 +1,27 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+window.gCmds = {
+  get list() {
+    return Object.keys(gFsRoot.bin);
+  },
+
+  run(name, ...args) {
+    let fileNode = gFsRoot.bin[name];
+
+    if (!fileNode) {
+      throw new Error(`Command not found: ${name}`);
+    }
+
+    let mod = fileNode.require();
+
+    if (mod.divModuleType !== 'program') {
+      throw new Error(`${name} is not a program`);
+    }
+
+    gProcMan.run(mod, ...args);
+  },
+};
+
+},{}],2:[function(require,module,exports){
 let desktopMenu = require('./desktopMenu');
 let wmRoot = require('./wmRoot');
 
@@ -21,7 +44,7 @@ module.exports = {
   ]),
 };
 
-},{"./desktopMenu":2,"./wmRoot":19}],2:[function(require,module,exports){
+},{"./desktopMenu":3,"./wmRoot":24}],3:[function(require,module,exports){
 let menuClock = require('./menuClock');
 let menuDesktopTags = require('./menuDesktopTags');
 let menuLauncher = require('./menuLauncher');
@@ -73,12 +96,179 @@ module.exports = {
   },
 };
 
-},{"./menuClock":7,"./menuDesktopTags":8,"./menuLauncher":9,"./menuVolCtrl":10,"./menuWndTitle":11}],3:[function(require,module,exports){
+},{"./menuClock":13,"./menuDesktopTags":14,"./menuLauncher":15,"./menuVolCtrl":16,"./menuWndTitle":17}],4:[function(require,module,exports){
+let metal = require('./metal');
+
+module.exports = {
+  divModuleType: 'program',
+
+  createProcess: () => ({
+    start() {
+      this.wnd = gWmRoot.createWnd({
+        component: metal,
+      });
+
+      this.wnd.on('close', () => {
+        this.terminate();
+      });
+    },
+
+    terminate() {
+      this.wnd.close();
+      gProcMan.remove(this.id);
+    },
+  }),
+};
+
+},{"./metal":5}],5:[function(require,module,exports){
+let metalNav = require('./metalNav');
+let metalFrame = require('./metalFrame');
+
+window.metal = module.exports = {
+  name: 'metal',
+
+  oninit: function(vn) {
+    this.wnd = vn.attrs.wnd;
+    this.wnd.componentState = this;
+
+    this.wnd.title = 'Metal Web Browser';
+
+    Object.defineProperty(this.wnd, 'menuWndTitleVNode', {
+      get: () => {
+        if (!this.wnd.maximized) {
+          return null;
+        }
+
+        return m(metalNav, {
+          metal: this,
+          inMenuWndTitle: true,
+        });
+      },
+    });
+
+    this.url = 'https://suckless.org';
+  },
+
+  view: function() {
+    return m('.metal', [
+      m(metalNav, { metal: this }),
+      m(metalFrame, { metal: this }),
+    ]);
+  },
+};
+
+},{"./metalFrame":6,"./metalNav":7}],6:[function(require,module,exports){
+module.exports = {
+  oninit: function(vn) {
+    this.metal = vn.attrs.metal;
+  },
+
+  view: function() {
+    return m('.metalFrame', {
+      class: makeClassString({
+        'metalFrame--floating': !this.metal.wnd.maximized,
+      }),
+    }, [
+      m('iframe.metalFrame-iframe', {
+        src: this.metal.url,
+      }),
+    ]);
+  },
+};
+
+},{}],7:[function(require,module,exports){
+module.exports = {
+  oninit: function(vn) {
+    this.metal = vn.attrs.metal;
+  },
+
+  oncreate: function(vn) {
+    let $input = $(vn.dom).find('.metalNav-urlInput');
+
+    $input
+      .on('dblclick', () => {
+        if (this.focus) {
+          return;
+        }
+
+        this.focus = true;
+        $input.focus().select();
+      })
+      .on('focus', () => {
+        if (this.focus) {
+          return;
+        }
+
+        $input.blur();
+      })
+      .on('blur', () => {
+        this.focus = false;
+      })
+      .on('keydown', ev => {
+        switch (ev.key) {
+          case 'Escape':
+            $input.val(this.metal.url).blur();
+            break;
+
+          case 'Enter':
+            let url = $input.val();
+
+            if (!/^[^:]+:\/\//.test(url)) {
+              url = `https://${url}`;
+            }
+
+            this.metal.url = url;
+
+            $input.blur();
+            m.redraw();
+
+            break;
+        }
+      });
+  },
+
+  view: function(vn) {
+    let { inMenuWndTitle } = vn.attrs;
+
+    return m('.metalNav', {
+      class: makeClassString({
+        'metalNav--inWnd': !inMenuWndTitle,
+        'metalNav--inMenuWndTitle': inMenuWndTitle,
+      }),
+    }, [
+      m('input.metalNav-urlInput', {
+        autocomplete: 'off',
+        autocorrect: 'off',
+        autocapitalize: 'off',
+        spellcheck: false,
+        value: this.metal.url,
+
+        class: makeClassString({
+          'metalNav-urlInput--inWnd': !inMenuWndTitle,
+          'metalNav-urlInput--inMenuWndTitle': inMenuWndTitle,
+        }),
+      }),
+    ]);
+  },
+};
+
+},{}],8:[function(require,module,exports){
+window.gFsRoot = module.exports = {
+  bin: {
+    metal: {
+      require: () => require('./bin/metal'),
+    },
+  },
+};
+
+},{"./bin/metal":4}],9:[function(require,module,exports){
 window.$ = window.jQuery = require('jquery');
 require('jquery-ui-dist/jquery-ui');
 
+require('./cmds');
+require('./fs');
 require('./kbd');
-require('./metal');
+require('./procMan');
 require('./wmRoot');
 
 window.m = require('mithril');
@@ -90,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
   m.mount(document.body, desktop);
 });
 
-},{"./desktop":1,"./kbd":4,"./makeClassString":5,"./metal":12,"./wmRoot":19,"jquery":16,"jquery-ui-dist/jquery-ui":15,"mithril":17}],4:[function(require,module,exports){
+},{"./cmds":1,"./desktop":2,"./fs":8,"./kbd":10,"./makeClassString":11,"./procMan":23,"./wmRoot":24,"jquery":20,"jquery-ui-dist/jquery-ui":19,"mithril":21}],10:[function(require,module,exports){
 window.gKbd = {
   bindings: {},
   keysDown: {},
@@ -173,7 +363,7 @@ function keyHandler(ev) {
   }
 }
 
-},{}],5:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 let kvRe = /(--|_)$/;
 
 module.exports = classNames => Object.entries(classNames)
@@ -187,7 +377,7 @@ module.exports = classNames => Object.entries(classNames)
   })
   .join(' ');
 
-},{}],6:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = {
   oninit: function({ attrs }) {
     this.attrs = attrs;
@@ -371,7 +561,7 @@ module.exports = {
   },
 };
 
-},{}],7:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 let moment = require('moment');
 
 module.exports = {
@@ -409,7 +599,7 @@ module.exports = {
   },
 };
 
-},{"moment":18}],8:[function(require,module,exports){
+},{"moment":22}],14:[function(require,module,exports){
 module.exports = {
   oninit: function() {
     this.switchCmd = num => {
@@ -464,19 +654,17 @@ module.exports = {
   },
 };
 
-},{}],9:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 let menuAutocomplete = require('./menuAutocomplete');
-let metal = require('./metal');
 
 module.exports = {
   oninit: function(vn) {
     let attrs = this.attrs = vn.attrs;
     let getCb = k => attrs[k] || function() {};
 
-    this.rows = [
-      { key: 'metal', cols: ['metal', 'Metal Web Browser'] },
-      { key: 'none', cols: ['none', 'Just a placeholder row'] },
-    ];
+    this.rows = gCmds.list.map(name => ({
+      key: name, cols: [name],
+    }));
 
     this.onClose = getCb('onClose');
 
@@ -485,10 +673,7 @@ module.exports = {
     );
 
     this.onSelect = row => {
-      if (row.key === 'metal') {
-        gWmRoot.createWnd({ component: metal });
-      }
-
+      gCmds.run(row.key);
       this.onClose();
     };
   },
@@ -507,7 +692,7 @@ module.exports = {
   },
 };
 
-},{"./menuAutocomplete":6,"./metal":12}],10:[function(require,module,exports){
+},{"./menuAutocomplete":12}],16:[function(require,module,exports){
 module.exports = {
   oninit: function() {
     this.volume = 1;
@@ -522,7 +707,7 @@ module.exports = {
   },
 };
 
-},{}],11:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = {
   view: () => {
     let activeWnd = gWmRoot.activeWnd || {
@@ -557,139 +742,311 @@ module.exports = {
   },
 };
 
-},{}],12:[function(require,module,exports){
-let metalNav = require('./metalNav');
-let metalFrame = require('./metalFrame');
+},{}],18:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-window.metal = module.exports = {
-  name: 'metal',
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
 
-  oninit: function(vn) {
-    this.wnd = vn.attrs.wnd;
-    this.wnd.componentState = this;
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
 
-    this.wnd.title = 'Metal Web Browser';
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
 
-    Object.defineProperty(this.wnd, 'menuWndTitleVNode', {
-      get: () => {
-        if (!this.wnd.maximized) {
-          return null;
-        }
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
 
-        return m(metalNav, {
-          metal: this,
-          inMenuWndTitle: true,
-        });
-      },
-    });
-
-    this.url = 'https://suckless.org';
-  },
-
-  view: function() {
-    return m('.metal', [
-      m(metalNav, { metal: this }),
-      m(metalFrame, { metal: this }),
-    ]);
-  },
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
 };
 
-},{"./metalFrame":13,"./metalNav":14}],13:[function(require,module,exports){
-module.exports = {
-  oninit: function(vn) {
-    this.metal = vn.attrs.metal;
-  },
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
 
-  view: function() {
-    return m('.metalFrame', {
-      class: makeClassString({
-        'metalFrame--floating': !this.metal.wnd.maximized,
-      }),
-    }, [
-      m('iframe.metalFrame-iframe', {
-        src: this.metal.url,
-      }),
-    ]);
-  },
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
 };
 
-},{}],14:[function(require,module,exports){
-module.exports = {
-  oninit: function(vn) {
-    this.metal = vn.attrs.metal;
-  },
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
 
-  oncreate: function(vn) {
-    let $input = $(vn.dom).find('.metalNav-urlInput');
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
 
-    $input
-      .on('dblclick', () => {
-        if (this.focus) {
-          return;
-        }
+  if (!this._events)
+    this._events = {};
 
-        this.focus = true;
-        $input.focus().select();
-      })
-      .on('focus', () => {
-        if (this.focus) {
-          return;
-        }
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
 
-        $input.blur();
-      })
-      .on('blur', () => {
-        this.focus = false;
-      })
-      .on('keydown', ev => {
-        switch (ev.key) {
-          case 'Escape':
-            $input.val(this.metal.url).blur();
-            break;
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
 
-          case 'Enter':
-            let url = $input.val();
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
 
-            if (!/^[^:]+:\/\//.test(url)) {
-              url = `https://${url}`;
-            }
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
 
-            this.metal.url = url;
-
-            $input.blur();
-            m.redraw();
-
-            break;
-        }
-      });
-  },
-
-  view: function(vn) {
-    let { inMenuWndTitle } = vn.attrs;
-
-    return m('.metalNav', {
-      class: makeClassString({
-        'metalNav--inWnd': !inMenuWndTitle,
-        'metalNav--inMenuWndTitle': inMenuWndTitle,
-      }),
-    }, [
-      m('input.metalNav-urlInput', {
-        autocomplete: 'off',
-        autocorrect: 'off',
-        autocapitalize: 'off',
-        spellcheck: false,
-        value: this.metal.url,
-
-        class: makeClassString({
-          'metalNav-urlInput--inWnd': !inMenuWndTitle,
-          'metalNav-urlInput--inMenuWndTitle': inMenuWndTitle,
-        }),
-      }),
-    ]);
-  },
+  return this;
 };
 
-},{}],15:[function(require,module,exports){
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],19:[function(require,module,exports){
 /*! jQuery UI - v1.12.1 - 2016-09-14
 * http://jqueryui.com
 * Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-1-7.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
@@ -19396,7 +19753,7 @@ var widgetsTooltip = $.ui.tooltip;
 
 
 }));
-},{}],16:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -29651,7 +30008,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],17:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 (function (global){
 ;(function() {
 "use strict"
@@ -30911,7 +31268,7 @@ if (typeof module !== "undefined") module["exports"] = m
 else window.m = m
 }());
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 //! moment.js
 //! version : 2.20.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -35448,10 +35805,34 @@ return hooks;
 
 })));
 
-},{}],19:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
+window.gProcMan = {
+  nextPid: 1,
+  processes: {},
+
+  run(program, ...args) {
+    let proc = program.createProcess();
+
+    proc.id = gProcMan.nextPid++;
+    gProcMan.processes[proc.id] = proc;
+
+    try {
+      proc.start(...args);
+    }
+    catch(err) {
+      gProcMan.remove(proc.id);
+      throw err;
+    }
+  },
+
+  remove(id) {
+    delete gProcMan.processes[id];
+  },
+};
+
+},{}],24:[function(require,module,exports){
 require('./kbd');
 
-let metal = require('./metal');
 let wnd = require('./wnd');
 
 let nextWndKey = 0;
@@ -35528,7 +35909,7 @@ module.exports = {
     });
 
     gKbd.addBinding('Meta-B', () => {
-      gWmRoot.createWnd({ component: metal });
+      gCmds.run('metal');
     });
 
     for (let evName of ['keydown', 'keyup']) {
@@ -35577,7 +35958,9 @@ module.exports = {
   },
 };
 
-},{"./kbd":4,"./metal":12,"./wnd":20}],20:[function(require,module,exports){
+},{"./kbd":10,"./wnd":25}],25:[function(require,module,exports){
+let EventEmitter = require('events');
+
 module.exports = {
   oninit: function(vn) {
     let wnd = vn.attrs;
@@ -35595,6 +35978,12 @@ module.exports = {
       if (wnd[k] === undefined) {
         wnd[k] = defaults[k];
       }
+    }
+
+    wnd.ee = new EventEmitter();
+
+    for (let k of ['on', 'once', 'removeListener']) {
+      wnd[k] = (...args) => wnd.ee[k](...args);
     }
 
     if (wnd.active) {
@@ -35633,11 +36022,17 @@ module.exports = {
     };
 
     wnd.close = () => {
+      if (wnd.closed) {
+        return;
+      }
+
+      wnd.closed = true;
       wnd.active = false;
 
       let { wnds } = gWmRoot;
 
       wnds.splice(wnds.indexOf(wnd), 1);
+      wnd.ee.emit('close');
 
       m.redraw();
     };
@@ -35740,4 +36135,4 @@ module.exports = {
   },
 };
 
-},{}]},{},[3]);
+},{"events":18}]},{},[9]);

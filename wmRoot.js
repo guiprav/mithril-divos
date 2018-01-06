@@ -1,6 +1,5 @@
 require('./kbd');
 
-let metal = require('./metal');
 let wnd = require('./wnd');
 
 let nextWndKey = 0;
@@ -77,7 +76,7 @@ module.exports = {
     });
 
     gKbd.addBinding('Meta-B', () => {
-      gWmRoot.createWnd({ component: metal });
+      gCmds.run('metal');
     });
 
     for (let evName of ['keydown', 'keyup']) {

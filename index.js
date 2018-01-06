@@ -1,8 +1,10 @@
 window.$ = window.jQuery = require('jquery');
 require('jquery-ui-dist/jquery-ui');
 
+require('./cmds');
+require('./fs');
 require('./kbd');
-require('./metal');
+require('./procMan');
 require('./wmRoot');
 
 window.m = require('mithril');
