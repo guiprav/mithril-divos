@@ -3,5 +3,9 @@ window.gFsRoot = module.exports = {
     metal: {
       require: () => require('./bin/metal'),
     },
+
+    term: {
+      require: () => require('./bin/term'),
+    },
   },
 };
